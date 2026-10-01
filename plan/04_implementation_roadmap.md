@@ -7,7 +7,7 @@ This roadmap focuses on building a locally-hosted desktop application using Next
 *   Initialize FastAPI Python project. Configure it to serve the Next.js static files.
 *   Integrate database storage (users, configurations).
 *   Integrate Angel One SmartAPI and establish WebSocket connection in FastAPI.
-*   **Milestone:** App runs locally via a script (`python run.py`), displays live market data on the Next.js UI using TradingView charts.
+*   **Milestone:** App runs locally via a script (`python run.py`), displays live market data on the Next.js UI using `react-financial-charts`.
 
 ## Phase 2: Local Portfolio & Manual Trading
 *   Implement secure local API key storage.

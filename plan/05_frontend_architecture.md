@@ -38,7 +38,7 @@ The application will utilize a persistent global layout wrapper (`layout.tsx` in
 This is the core operational screen for monitoring live markets, manual trading, and rapid script editing.
 
 *   **Left Column (Market Data & Analysis):**
-    *   **Top Area (Price Graph):** Integrated TradingView Lightweight Charts.
+    *   **Top Area (Price Graph):** Integrated `react-financial-charts` for candlestick rendering, drawing tools (trendlines, Fibonacci), and native technical overlays.
     *   **Bottom Area (Analysis Dual-Mode):** A tabbed component situated below the chart (Technical Metrics vs. AI Analysis).
 *   **Right Column (Execution & History):**
     *   **Top Area (Trade History):** A real-time scrolling feed of executed trades.
@@ -72,5 +72,5 @@ A dedicated, full-screen environment for developing and simulating algorithmic s
     *   *Primary Application UI:* **Google Sans** for clean, highly legible menus, dashboards, and data tables.
     *   *IDE & Logs:* **JetBrains Mono** for the code editor and raw execution logs.
 *   **Component Library:** shadcn/ui (built on Radix UI) for accessible dropdowns, tabs, sidebars, and dialogs.
-*   **Charting:** `lightweight-charts` by TradingView.
+*   **Charting:** `react-financial-charts` for interactive, open-source financial charting with drawing tools.
 *   **Code Editor:** `@monaco-editor/react` for the IDE experience.

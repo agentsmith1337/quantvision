@@ -1,0 +1,28 @@
+# Repo-wide safety net; backend/ and frontend/ have their own, more specific rules.
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local app data: SQLite, logs, market data cache
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.log
+logs/
+data_cache/
+*.parquet
+
+# Python / Node build output
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db

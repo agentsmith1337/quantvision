@@ -1,26 +1,68 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Three palettes, switched by next-themes via <html data-theme="...">. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root,
+[data-theme="day"] {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #eef1f5;
+  --border: #dde2ea;
+  --fg: #111827;
+  --muted: #5b6474;
+  --accent: #1d6ff2;
+  --accent-fg: #ffffff;
+  --up: #0f9d58;
+  --down: #d93025;
+  color-scheme: light;
+}
+
+[data-theme="evening"] {
+  --bg: #2a2420;
+  --surface: #332c27;
+  --surface-2: #3d3530;
+  --border: #4a413a;
+  --fg: #eadfce;
+  --muted: #b3a690;
+  --accent: #e0a458;
+  --accent-fg: #2a2420;
+  --up: #8fbf7f;
+  --down: #e07a5f;
+  color-scheme: dark;
+}
+
+[data-theme="dark"] {
+  --bg: #0b0d10;
+  --surface: #13161b;
+  --surface-2: #1b1f26;
+  --border: #262b33;
+  --fg: #e6e8eb;
+  --muted: #8b93a1;
+  --accent: #4c8dff;
+  --accent-fg: #0b0d10;
+  --up: #26a69a;
+  --down: #ef5350;
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-up: var(--up);
+  --color-down: var(--down);
+  --font-sans: var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-outfit), var(--font-google-sans), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
 }

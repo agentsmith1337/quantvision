@@ -7,7 +7,7 @@ QuantVision is an algorithmic trading engine and web application connected to th
 
 ### 2.1. Real-Time Market Data & Charting
 *   **Live Data Feed:** Stream real-time stock prices and market depth from Angel One via WebSockets.
-*   **Advanced Charting:** Integration with TradingView library for interactive charts.
+*   **Advanced Charting:** Integration with `react-financial-charts` for interactive charts, built-in technical indicators, and drawing tools (trendlines, Fibonacci).
 *   **Watchlists:** Manage custom watchlists.
 
 ### 2.2. Portfolio Management
