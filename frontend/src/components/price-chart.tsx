@@ -7,9 +7,21 @@ import { apiGet, INTERVAL_SECONDS, isAbortError, isTransient, type Candle, type 
 import { chartPalette } from "@/lib/chart-theme";
 import { marketSocket, type Tick } from "@/lib/market-socket";
 import { useElementSize } from "@/lib/use-element-size";
-import type { Bar, ChartType, DrawingTool, FibDrawing, IndicatorId, TrendDrawing } from "./chart/financial-chart";
+import { BRICK_CHARTS, benchmarkFor, type ChartType, type DrawingTool, type IndicatorId } from "./chart/catalog";
+import {
+  EMPTY_DRAWINGS,
+  drawingCount,
+  loadDrawings,
+  saveDrawings,
+  toIndexed,
+  toStored,
+  undoLast,
+  withAdded,
+  type StoredDrawings,
+} from "./chart/drawings-store";
+import type { Bar, DrawingKind, Drawings, XY } from "./chart/financial-chart";
 
-export type { ChartType, IndicatorId } from "./chart/financial-chart";
+export type { ChartType, IndicatorId } from "./chart/catalog";
 
 // The chart draws on canvas and touches window at import time; keep it out of the static prerender.
 const FinancialChart = dynamic(() => import("./chart/financial-chart"), { ssr: false });
@@ -22,11 +34,15 @@ type Props = { symbol: string; interval: Interval; chartType: ChartType; indicat
 type LoadState = { key: string; status: "retrying" | "ready" | "failed"; attempt: number; error: string | null };
 const RETRY_DELAYS = [1000, 2000, 4000];
 
+const historyUrl = (symbol: string, interval: Interval) =>
+  `/api/market/candles/${encodeURIComponent(symbol)}?interval=${interval}&days=${HISTORY_DAYS[interval]}`;
+
 export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
   const [containerRef, size] = useElementSize<HTMLDivElement>();
   const { resolvedTheme } = useTheme();
   const palette = useMemo(() => chartPalette(resolvedTheme), [resolvedTheme]);
   const step = INTERVAL_SECONDS[interval];
+  const bricks = BRICK_CHARTS.has(chartType);
 
   const [reloadKey, setReloadKey] = useState(0);
   const loadKey = `${symbol}:${interval}:${reloadKey}`;
@@ -35,6 +51,7 @@ export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
   const [tool, setTool] = useState<DrawingTool>("cursor");
   const drawingKey = `qv.drawings.${symbol}.${interval}`;
   const [drawings, setDrawings] = useState<StoredDrawings>(() => loadDrawings(drawingKey));
+  const [pendingText, setPendingText] = useState<XY | null>(null);
 
   // Load history (retrying while Angel One rate-limits), then fold live ticks into
   // the latest bar, batched per animation frame.
@@ -76,9 +93,7 @@ export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
     };
 
     const attempt = (n: number) => {
-      apiGet<{ candles: Candle[] }>(`/api/market/candles/${encodeURIComponent(symbol)}?interval=${interval}&days=${HISTORY_DAYS[interval]}`, {
-        signal: controller.signal,
-      })
+      apiGet<{ candles: Candle[] }>(historyUrl(symbol, interval), { signal: controller.signal })
         .then(({ candles }) => {
           series = candles.map((c) => ({ date: new Date(c.time * 1000), open: c.open, high: c.high, low: c.low, close: c.close, volume: c.volume }));
           settle("ready", n, null);
@@ -103,15 +118,25 @@ export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
     };
   }, [symbol, interval, step, loadKey]);
 
+  const benchmark = useBenchmark(indicators.has("compare") && !bricks ? benchmarkFor(symbol) : null, interval);
+
   const current = load?.key === loadKey ? load : null;
   const shownBars = current?.status === "ready" || current?.status === "failed" ? bars : null;
-  const indexed = useMemo(() => (shownBars ? toIndexed(drawings, shownBars, step) : { trends: [], fibs: [] }), [drawings, shownBars, step]);
+  const indexed = useMemo(() => (shownBars ? toIndexed(drawings, shownBars, step) : toIndexed(EMPTY_DRAWINGS, [], step)), [drawings, shownBars, step]);
 
-  const saveDrawings = (next: StoredDrawings) => {
+  const update = (next: StoredDrawings) => {
     setDrawings(next);
-    try {
-      localStorage.setItem(drawingKey, JSON.stringify(next));
-    } catch {}
+    saveDrawings(drawingKey, next);
+  };
+  const onDrawingsChange = <K extends DrawingKind>(kind: K, items: Drawings[K]) => {
+    if (shownBars) update({ ...drawings, [kind]: toStored(kind, items, shownBars, step) });
+  };
+  const addText = (text: string) => {
+    if (pendingText && shownBars && text.trim()) {
+      const [stored] = toStored("texts", [{ position: pendingText, text: text.trim() }], shownBars, step);
+      update(withAdded(drawings, "texts", stored));
+    }
+    setPendingText(null);
   };
 
   // Esc drops the active drawing tool.
@@ -121,23 +146,24 @@ export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const drawingCount = drawings.trends.length + drawings.fibs.length;
   const fontFamily = typeof document === "undefined" ? "sans-serif" : getComputedStyle(document.body).fontFamily;
   const retry = () => setReloadKey((k) => k + 1);
+  const count = drawingCount(drawings);
 
   return (
     <div className="flex h-full w-full">
       <DrawingToolbar
-        tool={tool}
+        tool={bricks ? "cursor" : tool}
+        disabled={bricks}
         onTool={setTool}
-        canUndo={drawingCount > 0}
-        onUndo={() => saveDrawings(undoLast(drawings))}
-        onClear={() => saveDrawings({ trends: [], fibs: [] })}
+        canUndo={count > 0}
+        onUndo={() => update(undoLast(drawings))}
+        onClear={() => update(EMPTY_DRAWINGS)}
       />
       <div ref={containerRef} className="relative min-w-0 flex-1">
         {shownBars && shownBars.length > 0 && size.width > 0 && size.height > 0 && (
           <div className="absolute inset-0">
-            <ChartErrorBoundary resetKey={loadKey} onRetry={retry}>
+            <ChartErrorBoundary resetKey={`${loadKey}:${chartType}:${[...indicators].sort().join(",")}`} onRetry={retry}>
               <FinancialChart
                 width={size.width}
                 height={size.height}
@@ -146,11 +172,11 @@ export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
                 intraday={interval !== "1d"}
                 chartType={chartType}
                 indicators={indicators}
-                tool={tool}
-                trends={indexed.trends}
-                fibs={indexed.fibs}
-                onTrendsChange={(trends) => saveDrawings({ ...drawings, trends: trends.map((d) => storeTrend(d, shownBars, step)) })}
-                onFibsChange={(fibs) => saveDrawings({ ...drawings, fibs: fibs.map((d) => storeFib(d, shownBars, step)) })}
+                benchmark={benchmark}
+                tool={bricks ? "cursor" : tool}
+                drawings={indexed}
+                onDrawingsChange={onDrawingsChange}
+                onTextPosition={setPendingText}
                 onToolDone={() => setTool("cursor")}
                 palette={palette}
                 fontFamily={fontFamily}
@@ -158,6 +184,9 @@ export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
             </ChartErrorBoundary>
           </div>
         )}
+        {tool === "hline" && !bricks && <ToolHint>Click the chart to place a price level. Drag it to adjust; × removes it.</ToolHint>}
+        {tool === "text" && !bricks && <ToolHint>Click the chart where the note should go.</ToolHint>}
+        {pendingText && <TextPrompt onSubmit={addText} onCancel={() => setPendingText(null)} />}
         {(!current || current.status === "retrying") && (
           <ChartLoading
             symbol={symbol}
@@ -185,6 +214,63 @@ export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
           ))}
       </div>
     </div>
+  );
+}
+
+/** Benchmark closes (by bar timestamp) for the Compare pane, or null while off/loading. */
+function useBenchmark(symbol: string | null, interval: Interval) {
+  const [state, setState] = useState<{ key: string; value: { symbol: string; closes: Map<number, number> } } | null>(null);
+  const key = symbol ? `${symbol}:${interval}` : null;
+
+  useEffect(() => {
+    if (!symbol || !key) return;
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const attempt = (n: number) =>
+      apiGet<{ candles: Candle[] }>(historyUrl(symbol, interval), { signal: controller.signal, background: true })
+        .then(({ candles }) => setState({ key, value: { symbol, closes: new Map(candles.map((c) => [c.time * 1000, c.close])) } }))
+        .catch((e: Error) => {
+          if (!controller.signal.aborted && isTransient(e) && n < RETRY_DELAYS.length) timer = setTimeout(() => attempt(n + 1), RETRY_DELAYS[n]);
+        });
+    attempt(0);
+    return () => {
+      controller.abort();
+      if (timer) clearTimeout(timer);
+    };
+  }, [symbol, interval, key]);
+
+  return state?.key === key ? state.value : null;
+}
+
+function ToolHint({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="pointer-events-none absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-surface-2 px-3 py-1 text-xs text-muted shadow">{children}</div>
+  );
+}
+
+function TextPrompt({ onSubmit, onCancel }: { onSubmit: (text: string) => void; onCancel: () => void }) {
+  const [text, setText] = useState("");
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(text);
+      }}
+      className="absolute left-1/2 top-12 z-20 flex w-72 -translate-x-1/2 gap-2 rounded-xl border border-border bg-surface p-3 shadow-xl"
+    >
+      <input
+        autoFocus
+        value={text}
+        maxLength={80}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => e.key === "Escape" && onCancel()}
+        placeholder="Note text"
+        className="min-w-0 flex-1 rounded-lg border border-border bg-surface-2 px-2 py-1.5 text-sm outline-none focus:border-accent"
+      />
+      <button type="submit" disabled={!text.trim()} className="rounded-lg bg-accent px-3 text-sm font-semibold text-accent-fg disabled:opacity-50">
+        Add
+      </button>
+    </form>
   );
 }
 
@@ -223,7 +309,7 @@ class ChartErrorBoundary extends Component<BoundaryProps, { error: Error | null;
   }
 
   static getDerivedStateFromProps(props: BoundaryProps, state: { error: Error | null; key: string }) {
-    // A new symbol/interval/retry gets a fresh chart.
+    // A new symbol/interval/chart type/retry gets a fresh chart.
     return props.resetKey !== state.key ? { error: null, key: props.resetKey } : null;
   }
 
@@ -251,24 +337,37 @@ const TOOLS: { id: DrawingTool; label: string; icon: string }[] = [
   { id: "cursor", label: "Crosshair (Esc)", icon: "M12 3v18M3 12h18" },
   { id: "trendline", label: "Trend line", icon: "M4 20 20 4M4 20a1.5 1.5 0 1 0 0 .01M20 4a1.5 1.5 0 1 0 0 .01" },
   { id: "ray", label: "Ray", icon: "M4 20 21 3M4 20a1.5 1.5 0 1 0 0 .01M17 3h4v4" },
+  { id: "hline", label: "Price level", icon: "M3 12h18M17 9l3 3-3 3" },
+  { id: "channel", label: "Parallel channel", icon: "M3 16 15 4M9 20 21 8" },
+  { id: "stddev", label: "Standard deviation channel", icon: "M3 15 21 7M3 19l18-8M3 11l18-8" },
   { id: "fibonacci", label: "Fibonacci retracement", icon: "M3 4h18M3 9h18M3 13h18M3 17h18M3 21h18" },
+  { id: "gann", label: "Gann fan", icon: "M4 20 20 4M4 20l16-8M4 20 12 4M4 20h16" },
+  { id: "text", label: "Text note", icon: "M5 5h14M12 5v14M9 19h6" },
 ];
 
-function DrawingToolbar(props: { tool: DrawingTool; onTool: (t: DrawingTool) => void; canUndo: boolean; onUndo: () => void; onClear: () => void }) {
-  const btn = "grid size-8 place-items-center rounded-md";
+function DrawingToolbar(props: {
+  tool: DrawingTool;
+  disabled: boolean;
+  onTool: (t: DrawingTool) => void;
+  canUndo: boolean;
+  onUndo: () => void;
+  onClear: () => void;
+}) {
+  const btn = "grid size-8 place-items-center rounded-md disabled:cursor-not-allowed disabled:opacity-30";
   const icon = (d: string) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" className="size-4" aria-hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="size-4" aria-hidden>
       <path d={d} />
     </svg>
   );
   return (
-    <div className="flex w-10 shrink-0 flex-col items-center gap-1 border-r border-border py-2">
+    <div className="flex w-10 shrink-0 flex-col items-center gap-1 overflow-y-auto border-r border-border py-2">
       {TOOLS.map((t) => (
         <button
           key={t.id}
-          title={t.label}
+          title={props.disabled && t.id !== "cursor" ? `${t.label} (time-based charts only)` : t.label}
           aria-label={t.label}
           aria-pressed={props.tool === t.id}
+          disabled={props.disabled && t.id !== "cursor"}
           onClick={() => props.onTool(t.id)}
           className={`${btn} ${props.tool === t.id ? "bg-accent/15 text-accent" : "text-muted hover:bg-surface-2 hover:text-fg"}`}
         >
@@ -276,75 +375,12 @@ function DrawingToolbar(props: { tool: DrawingTool; onTool: (t: DrawingTool) => 
         </button>
       ))}
       <div className="my-1 w-5 border-t border-border" />
-      <button title="Undo last drawing" aria-label="Undo last drawing" disabled={!props.canUndo} onClick={props.onUndo} className={`${btn} text-muted hover:bg-surface-2 hover:text-fg disabled:opacity-30`}>
+      <button title="Undo last drawing" aria-label="Undo last drawing" disabled={!props.canUndo} onClick={props.onUndo} className={`${btn} text-muted hover:bg-surface-2 hover:text-fg`}>
         {icon("M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3")}
       </button>
-      <button title="Clear all drawings" aria-label="Clear all drawings" disabled={!props.canUndo} onClick={props.onClear} className={`${btn} text-muted hover:bg-surface-2 hover:text-down disabled:opacity-30`}>
+      <button title="Clear all drawings" aria-label="Clear all drawings" disabled={!props.canUndo} onClick={props.onClear} className={`${btn} text-muted hover:bg-surface-2 hover:text-down`}>
         {icon("M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3")}
       </button>
     </div>
   );
-}
-
-// --- Drawing persistence -------------------------------------------------------
-// The chart positions drawings by bar index, which shifts whenever history is
-// reloaded. Store them by timestamp instead and map back onto the current bars.
-
-type StoredTrend = { start: [number, number]; end: [number, number]; type: TrendDrawing["type"]; seq: number };
-type StoredFib = { x1: number; y1: number; x2: number; y2: number; type: FibDrawing["type"]; seq: number };
-type StoredDrawings = { trends: StoredTrend[]; fibs: StoredFib[] };
-
-function loadDrawings(key: string): StoredDrawings {
-  try {
-    const raw = typeof window === "undefined" ? null : localStorage.getItem(key);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return { trends: [], fibs: [] };
-}
-
-function indexToTime(x: number, bars: Bar[], step: number): number {
-  const i = Math.min(Math.max(Math.round(x), 0), bars.length - 1);
-  return bars[i].date.getTime() + (x - i) * step * 1000;
-}
-
-function timeToIndex(t: number, bars: Bar[], step: number): number {
-  let lo = 0;
-  let hi = bars.length - 1;
-  while (lo < hi) {
-    const mid = (lo + hi + 1) >> 1;
-    if (bars[mid].date.getTime() <= t) lo = mid;
-    else hi = mid - 1;
-  }
-  const offset = (t - bars[lo].date.getTime()) / (step * 1000);
-  // Inside the series, snap within the bar; beyond either end, extrapolate.
-  return lo === bars.length - 1 || offset < 0 ? lo + offset : lo + Math.min(offset, 0.999);
-}
-
-let seqCounter = Date.now();
-
-function storeTrend(d: TrendDrawing & { seq?: number }, bars: Bar[], step: number): StoredTrend {
-  return {
-    start: [indexToTime(d.start[0], bars, step), d.start[1]],
-    end: [indexToTime(d.end[0], bars, step), d.end[1]],
-    type: d.type,
-    seq: d.seq ?? seqCounter++,
-  };
-}
-
-function storeFib(d: FibDrawing & { seq?: number }, bars: Bar[], step: number): StoredFib {
-  return { x1: indexToTime(d.x1, bars, step), y1: d.y1, x2: indexToTime(d.x2, bars, step), y2: d.y2, type: d.type, seq: d.seq ?? seqCounter++ };
-}
-
-function toIndexed(s: StoredDrawings, bars: Bar[], step: number) {
-  if (bars.length === 0) return { trends: [], fibs: [] };
-  return {
-    trends: s.trends.map((d) => ({ ...d, start: [timeToIndex(d.start[0], bars, step), d.start[1]], end: [timeToIndex(d.end[0], bars, step), d.end[1]] }) as TrendDrawing),
-    fibs: s.fibs.map((d) => ({ ...d, x1: timeToIndex(d.x1, bars, step), x2: timeToIndex(d.x2, bars, step) }) as FibDrawing),
-  };
-}
-
-function undoLast(s: StoredDrawings): StoredDrawings {
-  const lastTrend = Math.max(-Infinity, ...s.trends.map((d) => d.seq));
-  const lastFib = Math.max(-Infinity, ...s.fibs.map((d) => d.seq));
-  return lastTrend > lastFib ? { ...s, trends: s.trends.filter((d) => d.seq !== lastTrend) } : { ...s, fibs: s.fibs.filter((d) => d.seq !== lastFib) };
 }
