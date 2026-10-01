@@ -1,6 +1,8 @@
+import asyncio
+import threading
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, WebSocket
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, WebSocket
 from fastapi.concurrency import run_in_threadpool
 
 from app.config import is_local_origin
@@ -12,6 +14,29 @@ from app.security import SESSION_COOKIE, require_session, sessions
 
 router = APIRouter(prefix="/api/market", dependencies=[Depends(require_session)])
 ws_router = APIRouter()
+
+
+async def run_abortable(request: Request, fn, *args):
+    """Run a blocking broker call, signalling it to give up if the browser disconnects.
+
+    Clicking quickly through stocks abandons earlier requests; without this they
+    would still queue for Angel One's 1 request/second slots ahead of the new one.
+    """
+    abort = threading.Event()
+
+    async def watch() -> None:
+        while not abort.is_set():
+            if await request.is_disconnected():
+                abort.set()
+                return
+            await asyncio.sleep(0.25)
+
+    watcher = asyncio.create_task(watch())
+    try:
+        return await run_in_threadpool(fn, *args, abort)
+    finally:
+        abort.set()
+        watcher.cancel()
 
 
 @router.get("/instruments")
@@ -28,8 +53,8 @@ def get_instrument(symbol: str) -> dict:
 
 
 @router.get("/search")
-async def search(q: str = Query(min_length=1, max_length=32)) -> list[dict]:
-    return [i.to_dict() for i in await run_in_threadpool(engine.search, q)]
+async def search(request: Request, q: str = Query(min_length=1, max_length=32)) -> list[dict]:
+    return [i.to_dict() for i in await run_abortable(request, engine.search, q)]
 
 
 @router.get("/status")
@@ -47,6 +72,7 @@ def quote(symbol: str) -> dict:
 
 @router.get("/candles/{symbol}")
 async def candles(
+    request: Request,
     symbol: str,
     interval: Literal["1m", "5m", "15m", "1h", "1d"] = "1m",
     days: int = Query(5, ge=1, le=2000),
@@ -58,7 +84,7 @@ async def candles(
     if feed is None:
         raise HTTPException(409, "Engine is locked; sign in first")
     try:
-        bars = await run_in_threadpool(feed.candles, inst, interval, days)
+        bars = await run_abortable(request, feed.candles, inst, interval, days)
     except FeedUnavailable as e:
         raise HTTPException(503, str(e)) from e
     return {"symbol": inst.symbol, "interval": interval, "candles": bars}

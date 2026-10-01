@@ -33,6 +33,9 @@ INTERVALS: dict[str, tuple[str, int, int]] = {
 }
 
 
+CANDLE_CACHE_SECONDS = {"1m": 20, "5m": 60, "15m": 120, "1h": 300, "1d": 900}
+
+
 class MarketFeed(ABC):
     mode: str
 
@@ -72,18 +75,23 @@ class MarketFeed(ABC):
     def _run(self) -> None: ...
 
     @abstractmethod
-    def candles(self, inst: Instrument, interval: str, days: int) -> list[dict]:
-        """Historical OHLCV bars, oldest first, `time` in epoch seconds. Blocking."""
+    def candles(self, inst: Instrument, interval: str, days: int, abort: threading.Event | None = None) -> list[dict]:
+        """Historical OHLCV bars, oldest first, `time` in epoch seconds. Blocking.
+
+        `abort` lets a caller give up while waiting for a rate-limit slot."""
 
 
 class AngelOneFeed(MarketFeed):
     mode = "angelone"
 
     def __init__(self, hub: MarketHub, session) -> None:
+        from app.broker.angel import TTLCache
+
         super().__init__(hub)
         self.session = session  # app.broker.angel.AngelSession
         self._ws = None
         self._ws_open = False
+        self._candle_cache = TTLCache()
 
     def stop(self) -> None:
         super().stop()
@@ -170,7 +178,14 @@ class AngelOneFeed(MarketFeed):
         )
         self.hub.publish_threadsafe(tick)
 
-    def candles(self, inst: Instrument, interval: str, days: int) -> list[dict]:
+    def candles(self, inst: Instrument, interval: str, days: int, abort: threading.Event | None = None) -> list[dict]:
+        # Live ticks extend the newest bar, so recently fetched history is good enough
+        # for a while; this keeps quick back-and-forth navigation off the 1 req/s limit.
+        ttl = CANDLE_CACHE_SECONDS[interval]
+        key = f"{inst.symbol}:{interval}:{days}"
+        return self._candle_cache.get(key, ttl, lambda: self._fetch_candles(inst, interval, days, abort))
+
+    def _fetch_candles(self, inst: Instrument, interval: str, days: int, abort: threading.Event | None) -> list[dict]:
         name, _, max_days = INTERVALS[interval]
         to = datetime.now(IST)
         frm = to - timedelta(days=min(days, max_days))
@@ -182,7 +197,7 @@ class AngelOneFeed(MarketFeed):
             "todate": to.strftime("%Y-%m-%d %H:%M"),
         }
         try:
-            rows = self.session.data("getCandleData", params) or []
+            rows = self.session.data("getCandleData", params, abort=abort) or []
         except BrokerError as e:
             raise FeedUnavailable(f"Angel One candle request failed: {e}") from e
         return [
@@ -239,7 +254,7 @@ class SimulatedFeed(MarketFeed):
                                 st["high"], st["low"], st["volume"] or None)
                 self.hub.publish_threadsafe(tick)
 
-    def candles(self, inst: Instrument, interval: str, days: int) -> list[dict]:
+    def candles(self, inst: Instrument, interval: str, days: int, abort: threading.Event | None = None) -> list[dict]:
         _, step, _ = INTERVALS[interval]
         count = min(days * 86400 // step, 1500)
         with self._lock:

@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, timezone
 from app.broker.base import (
     Broker, BrokerError, Funds, Holding, Order, OrderChanges, OrderRequest, Position, Trade,
 )
+from app.broker.ratelimit import RateLimiter
 from app.market.instruments import Instrument, registry, symbol_key
 
 log = logging.getLogger(__name__)
@@ -15,7 +16,13 @@ log = logging.getLogger(__name__)
 IST = timezone(timedelta(hours=5, minutes=30))
 # Token missing / invalid / expired: log in again and retry once.
 _AUTH_ERRORS = {"AG8001", "AG8002", "AG8003"}
-_MIN_CALL_SPACING = 0.35  # seconds; keeps every endpoint under Angel One's ~3 req/s floor
+_RATE_LIMIT_RETRIES = 3
+RATE_LIMITED = "Angel One is rate-limiting requests; try again in a few seconds"
+
+
+def _is_rate_limited(payload) -> bool:
+    text = str(payload).lower()
+    return "access rate" in text or "too many requests" in text or "rate limit" in text
 
 
 class AngelSession:
@@ -25,14 +32,15 @@ class AngelSession:
         self._pin: str = creds["pin"]
         self._totp_secret: str = creds["totp_secret"]
         self.api = None
-        self._lock = threading.RLock()
-        self._last_call = 0.0
+        self._login_lock = threading.RLock()
+        self.limiter = RateLimiter()
 
     def login(self):
         import pyotp
         from SmartApi import SmartConnect
 
-        with self._lock:
+        with self._login_lock:
+            self.limiter.acquire("generateSession")
             api = SmartConnect(api_key=self.api_key)
             try:
                 res = api.generateSession(self.client_code, self._pin, pyotp.TOTP(self._totp_secret).now())
@@ -52,25 +60,42 @@ class AngelSession:
     def access_token(self) -> str:
         return self.api.access_token
 
-    def call(self, method: str, *args) -> dict:
-        """Call a SmartConnect method; returns the raw response dict or raises BrokerError."""
-        with self._lock:
-            wait = _MIN_CALL_SPACING - (time.monotonic() - self._last_call)
-            if wait > 0:
-                time.sleep(wait)
-            if self.api is None:
+    def call(self, method: str, *args, abort: threading.Event | None = None) -> dict:
+        """Call a SmartConnect method within its rate limit; returns the raw response.
+
+        Raises BrokerError on failure, or ratelimit.Cancelled if `abort` is set while waiting.
+        """
+        if self.api is None:
+            self.login()
+        relogged = False
+        for attempt in range(_RATE_LIMIT_RETRIES + 1):
+            self.limiter.acquire(method, abort)
+            try:
+                res = self._invoke(method, *args)
+            except BrokerError as e:
+                if not _is_rate_limited(e):
+                    raise
+                if attempt == _RATE_LIMIT_RETRIES:
+                    raise BrokerError(RATE_LIMITED) from e
+                self._back_off(method, attempt)
+                continue
+            if isinstance(res, dict) and res.get("errorcode") in _AUTH_ERRORS and not relogged:
+                log.info("Angel One session expired; logging in again")
                 self.login()
-            for attempt in (1, 2):
-                try:
-                    res = self._invoke(method, *args)
-                finally:
-                    self._last_call = time.monotonic()
-                if isinstance(res, dict) and res.get("errorcode") in _AUTH_ERRORS and attempt == 1:
-                    log.info("Angel One session expired; logging in again")
-                    self.login()
-                    continue
-                return res
-        raise AssertionError("unreachable")
+                relogged = True
+                continue
+            if isinstance(res, dict) and not res.get("status") and _is_rate_limited(res.get("message")):
+                if attempt == _RATE_LIMIT_RETRIES:
+                    raise BrokerError(RATE_LIMITED)
+                self._back_off(method, attempt)
+                continue
+            return res
+        raise BrokerError(RATE_LIMITED)
+
+    def _back_off(self, method: str, attempt: int) -> None:
+        delay = 1.0 * (2**attempt)
+        log.info("Angel One rate limit hit on %s; retrying in %.0fs", method, delay)
+        self.limiter.penalise(method, delay)
 
     def _invoke(self, method: str, *args):
         try:
@@ -81,14 +106,39 @@ class AngelSession:
         except Exception as e:
             raise BrokerError(f"Angel One {method} failed: {e}") from e
 
-    def data(self, method: str, *args):
+    def data(self, method: str, *args, abort: threading.Event | None = None):
         """Call and unwrap `data`, raising BrokerError on a failed status."""
-        res = self.call(method, *args)
+        res = self.call(method, *args, abort=abort)
         if not isinstance(res, dict) or not res.get("status"):
             msg = res.get("message") if isinstance(res, dict) else str(res)
             code = res.get("errorcode") if isinstance(res, dict) else ""
             raise BrokerError(f"{msg} ({code})" if code else str(msg))
         return res.get("data")
+
+
+class TTLCache:
+    """Short-lived cache with single-flight: concurrent callers for a key share one fetch."""
+
+    def __init__(self) -> None:
+        self._values: dict[str, tuple[float, object]] = {}
+        self._locks: dict[str, threading.Lock] = {}
+        self._guard = threading.Lock()
+
+    def get(self, key: str, ttl: float, fetch):
+        with self._guard:
+            lock = self._locks.setdefault(key, threading.Lock())
+        with lock:
+            hit = self._values.get(key)
+            if hit and time.monotonic() - hit[0] < ttl:
+                return hit[1]
+            value = fetch()
+            self._values[key] = (time.monotonic(), value)
+            return value
+
+    def invalidate(self, *prefixes: str) -> None:
+        with self._guard:
+            for key in [k for k in self._values if not prefixes or k.startswith(prefixes)]:
+                del self._values[key]
 
 
 def _f(v) -> float:
@@ -130,10 +180,15 @@ class AngelBroker(Broker):
     def __init__(self, session: AngelSession) -> None:
         super().__init__()
         self.s = session
-        self._orders_cache: tuple[float, list[Order]] = (0.0, [])
+        # Several of these endpoints allow 1 request/s; pages and the order poller
+        # share recent answers instead of each spending a request.
+        self._cache = TTLCache()
+
+    def _get(self, method: str, ttl: float):
+        return self._cache.get(method, ttl, lambda: self.s.data(method) or [])
 
     def holdings(self) -> list[Holding]:
-        rows = self.s.data("holding") or []
+        rows = self._get("holding", 5.0)
         return [
             Holding(_symbol(d), d.get("exchange", ""), _i(d.get("quantity")) + _i(d.get("t1quantity")),
                     _f(d.get("averageprice")), _f(d.get("ltp")) or None, _f(d.get("close")) or None)
@@ -141,7 +196,7 @@ class AngelBroker(Broker):
         ]
 
     def positions(self) -> list[Position]:
-        rows = self.s.data("position") or []
+        rows = self._get("position", 2.0)
         out = []
         for d in rows:
             out.append(Position(
@@ -158,7 +213,7 @@ class AngelBroker(Broker):
         return out
 
     def funds(self) -> Funds:
-        d = self.s.data("rmsLimit") or {}
+        d = self._cache.get("rmsLimit", 3.0, lambda: self.s.data("rmsLimit") or {})
         return Funds(available_cash=_f(d.get("availablecash")), used_margin=_f(d.get("utiliseddebits")), net=_f(d.get("net")))
 
     def _to_order(self, d: dict) -> Order:
@@ -182,22 +237,19 @@ class AngelBroker(Broker):
         )
 
     def orders(self) -> list[Order]:
-        rows = self.s.data("orderBook") or []
+        rows = self._get("orderBook", 1.5)
         orders = [self._to_order(d) for d in rows]
         orders.sort(key=lambda o: o.updated_at, reverse=True)
-        self._orders_cache = (time.monotonic(), orders)
         return orders
 
     def _find(self, order_id: str) -> Order:
-        stamp, cached = self._orders_cache
-        orders = cached if time.monotonic() - stamp < 3 else self.orders()
-        for o in orders:
+        for o in self.orders():
             if o.order_id == order_id:
                 return o
         raise BrokerError(f"Order {order_id} not found in today's order book")
 
     def trades(self) -> list[Trade]:
-        rows = self.s.data("tradeBook") or []
+        rows = self._get("tradeBook", 2.0)
         trades = [
             Trade(str(d.get("fillid", "")), str(d.get("orderid", "")), _symbol(d), d.get("transactiontype", ""),
                   d.get("producttype", ""), _i(d.get("fillsize")), _f(d.get("fillprice")), _iso(d.get("filltime")))
@@ -227,6 +279,7 @@ class AngelBroker(Broker):
             "ordertag": "quantvision",
         }
         data = self.s.data("placeOrder", params) or {}
+        self._cache.invalidate()
         order_id = str(data.get("orderid", ""))
         log.info("Angel One order placed: %s %s %s x%s -> %s", req.side, inst.symbol, req.order_type, req.quantity, order_id)
         try:
@@ -237,7 +290,7 @@ class AngelBroker(Broker):
                          req.price, req.trigger_price, None, "put order req received", "", datetime.now(IST).isoformat(), variety)
 
     def _find_fresh(self, order_id: str) -> Order:
-        self._orders_cache = (0.0, [])
+        self._cache.invalidate("orderBook")
         return self._find(order_id)
 
     def modify_order(self, order_id: str, changes: OrderChanges) -> Order:
@@ -259,14 +312,16 @@ class AngelBroker(Broker):
             "exchange": inst.exchange,
         }
         self.s.data("modifyOrder", params)
+        self._cache.invalidate()
         return self._find_fresh(order_id)
 
     def cancel_order(self, order_id: str) -> None:
         o = self._find(order_id)
         self.s.data("cancelOrder", order_id, o.variety)
+        self._cache.invalidate()
 
-    def search(self, query: str) -> list[Instrument]:
-        rows = self.s.data("searchScrip", "NSE", query) or []
+    def search(self, query: str, abort: threading.Event | None = None) -> list[Instrument]:
+        rows = self.s.data("searchScrip", "NSE", query, abort=abort) or []
         found: dict[str, Instrument] = {}
         for d in rows:
             ts = d.get("tradingsymbol", "")

@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { API_BASE } from "@/lib/api";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { BrokerStatusProvider, useBrokerStatus } from "@/lib/broker-status";
+import { ActivityBar } from "./activity-bar";
 import { ExecutionSidecard } from "./execution-sidecard";
 import { FeedBadge } from "./feed-badge";
 import { SymbolSearch } from "./symbol-search";
@@ -149,12 +150,13 @@ function Shell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
+        <header className="relative flex h-14 shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
           <GlobalSearch />
           <div className="flex-1" />
           <ModeBadge />
           <FeedBadge />
           <ProfileMenu />
+          <ActivityBar />
         </header>
         <main className="min-h-0 flex-1 overflow-auto">{children}</main>
       </div>

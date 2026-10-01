@@ -197,7 +197,7 @@ class Engine:
         if self.feed and instruments:
             self.feed.ensure_subscribed(instruments)
 
-    def search(self, query: str) -> list[Instrument]:
+    def search(self, query: str, abort: threading.Event | None = None) -> list[Instrument]:
         q = query.strip().upper()
         if len(q) < 2:
             return []
@@ -206,7 +206,7 @@ class Engine:
             return local
         if q not in self._search_cache:
             try:
-                self._search_cache[q] = self.live.search(q)
+                self._search_cache[q] = self.live.search(q, abort)
             except BrokerError as e:
                 log.warning("search failed: %s", e)
                 return local

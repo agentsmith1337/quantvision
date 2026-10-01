@@ -1,9 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
+import { Component, useEffect, useMemo, useState } from "react";
 import { useTheme } from "next-themes";
-import { apiGet, INTERVAL_SECONDS, type Candle, type Interval } from "@/lib/api";
+import { apiGet, INTERVAL_SECONDS, isAbortError, isTransient, type Candle, type Interval } from "@/lib/api";
 import { chartPalette } from "@/lib/chart-theme";
 import { marketSocket, type Tick } from "@/lib/market-socket";
 import { useElementSize } from "@/lib/use-element-size";
@@ -19,28 +19,36 @@ const HISTORY_DAYS: Record<Interval, number> = { "1m": 2, "5m": 10, "15m": 30, "
 
 type Props = { symbol: string; interval: Interval; chartType: ChartType; indicators: ReadonlySet<IndicatorId> };
 
+type LoadState = { key: string; status: "retrying" | "ready" | "failed"; attempt: number; error: string | null };
+const RETRY_DELAYS = [1000, 2000, 4000];
+
 export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
   const [containerRef, size] = useElementSize<HTMLDivElement>();
   const { resolvedTheme } = useTheme();
   const palette = useMemo(() => chartPalette(resolvedTheme), [resolvedTheme]);
   const step = INTERVAL_SECONDS[interval];
 
-  const [history, setHistory] = useState<{ bars: Bar[]; error: string | null } | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const loadKey = `${symbol}:${interval}:${reloadKey}`;
+  const [bars, setBars] = useState<Bar[] | null>(null);
+  const [load, setLoad] = useState<LoadState | null>(null);
   const [tool, setTool] = useState<DrawingTool>("cursor");
   const drawingKey = `qv.drawings.${symbol}.${interval}`;
   const [drawings, setDrawings] = useState<StoredDrawings>(() => loadDrawings(drawingKey));
 
-  // Load history, then fold live ticks into the latest bar (batched per animation frame).
+  // Load history (retrying while Angel One rate-limits), then fold live ticks into
+  // the latest bar, batched per animation frame.
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
     let unsubscribe = () => {};
-    let bars: Bar[] = [];
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let series: Bar[] = [];
     let lastDayVolume: number | null = null;
     let frame = 0;
 
     const flush = () => {
       frame = 0;
-      setHistory((h) => ({ bars: bars.slice(), error: h?.error ?? null }));
+      setBars(series.slice());
     };
 
     const onTick = (tick: Tick) => {
@@ -48,42 +56,56 @@ export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
       // Ticks carry cumulative day volume; attribute the delta to the current bar.
       const volDelta = tick.volume != null && lastDayVolume != null ? Math.max(0, tick.volume - lastDayVolume) : 0;
       if (tick.volume != null) lastDayVolume = tick.volume;
-      const last = bars.at(-1);
+      const last = series.at(-1);
       const lastT = last ? last.date.getTime() / 1000 : null;
       if (lastT != null && t < lastT) return;
       if (lastT != null && t < lastT + step) {
-        bars[bars.length - 1] = { ...last!, high: Math.max(last!.high, tick.ltp), low: Math.min(last!.low, tick.ltp), close: tick.ltp, volume: last!.volume + volDelta };
+        series[series.length - 1] = { ...last!, high: Math.max(last!.high, tick.ltp), low: Math.min(last!.low, tick.ltp), close: tick.ltp, volume: last!.volume + volDelta };
       } else {
         // Keep the history's bar phase (Angel One hourly bars start at :15).
         const start = lastT != null ? lastT + Math.floor((t - lastT) / step) * step : Math.floor((t + IST_OFFSET) / step) * step - IST_OFFSET;
-        bars.push({ date: new Date(start * 1000), open: tick.ltp, high: tick.ltp, low: tick.ltp, close: tick.ltp, volume: volDelta });
+        series.push({ date: new Date(start * 1000), open: tick.ltp, high: tick.ltp, low: tick.ltp, close: tick.ltp, volume: volDelta });
       }
       if (!frame) frame = requestAnimationFrame(flush);
     };
 
-    let error: string | null = null;
-    apiGet<{ candles: Candle[] }>(`/api/market/candles/${symbol}?interval=${interval}&days=${HISTORY_DAYS[interval]}`)
-      .then(({ candles }) => {
-        bars = candles.map((c) => ({ date: new Date(c.time * 1000), open: c.open, high: c.high, low: c.low, close: c.close, volume: c.volume }));
+    const settle = (status: "ready" | "failed", attempt: number, error: string | null) => {
+      setBars(series.slice());
+      setLoad({ key: loadKey, status, attempt, error });
+      unsubscribe = marketSocket.subscribe(symbol, onTick);
+    };
+
+    const attempt = (n: number) => {
+      apiGet<{ candles: Candle[] }>(`/api/market/candles/${encodeURIComponent(symbol)}?interval=${interval}&days=${HISTORY_DAYS[interval]}`, {
+        signal: controller.signal,
       })
-      .catch((e: Error) => {
-        error = e.message;
-      })
-      .finally(() => {
-        if (cancelled) return;
-        setHistory({ bars: bars.slice(), error });
-        unsubscribe = marketSocket.subscribe(symbol, onTick);
-      });
+        .then(({ candles }) => {
+          series = candles.map((c) => ({ date: new Date(c.time * 1000), open: c.open, high: c.high, low: c.low, close: c.close, volume: c.volume }));
+          settle("ready", n, null);
+        })
+        .catch((e: Error) => {
+          if (isAbortError(e) || controller.signal.aborted) return;
+          if (isTransient(e) && n < RETRY_DELAYS.length) {
+            setLoad({ key: loadKey, status: "retrying", attempt: n + 1, error: e.message });
+            retryTimer = setTimeout(() => attempt(n + 1), RETRY_DELAYS[n]);
+            return;
+          }
+          settle("failed", n, e.message);
+        });
+    };
+    attempt(0);
 
     return () => {
-      cancelled = true;
+      controller.abort();
       unsubscribe();
+      if (retryTimer) clearTimeout(retryTimer);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, [symbol, interval, step]);
+  }, [symbol, interval, step, loadKey]);
 
-  const bars = history?.bars;
-  const indexed = useMemo(() => (bars ? toIndexed(drawings, bars, step) : { trends: [], fibs: [] }), [drawings, bars, step]);
+  const current = load?.key === loadKey ? load : null;
+  const shownBars = current?.status === "ready" || current?.status === "failed" ? bars : null;
+  const indexed = useMemo(() => (shownBars ? toIndexed(drawings, shownBars, step) : { trends: [], fibs: [] }), [drawings, shownBars, step]);
 
   const saveDrawings = (next: StoredDrawings) => {
     setDrawings(next);
@@ -101,6 +123,7 @@ export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
 
   const drawingCount = drawings.trends.length + drawings.fibs.length;
   const fontFamily = typeof document === "undefined" ? "sans-serif" : getComputedStyle(document.body).fontFamily;
+  const retry = () => setReloadKey((k) => k + 1);
 
   return (
     <div className="flex h-full w-full">
@@ -112,36 +135,116 @@ export function PriceChart({ symbol, interval, chartType, indicators }: Props) {
         onClear={() => saveDrawings({ trends: [], fibs: [] })}
       />
       <div ref={containerRef} className="relative min-w-0 flex-1">
-        {bars && bars.length > 0 && size.width > 0 && size.height > 0 && (
+        {shownBars && shownBars.length > 0 && size.width > 0 && size.height > 0 && (
           <div className="absolute inset-0">
-            <FinancialChart
-              width={size.width}
-              height={size.height}
-              seriesName={`${symbol}-${interval}`}
-              bars={bars}
-              intraday={interval !== "1d"}
-              chartType={chartType}
-              indicators={indicators}
-              tool={tool}
-              trends={indexed.trends}
-              fibs={indexed.fibs}
-              onTrendsChange={(trends) => bars && saveDrawings({ ...drawings, trends: trends.map((d) => storeTrend(d, bars, step)) })}
-              onFibsChange={(fibs) => bars && saveDrawings({ ...drawings, fibs: fibs.map((d) => storeFib(d, bars, step)) })}
-              onToolDone={() => setTool("cursor")}
-              palette={palette}
-              fontFamily={fontFamily}
-            />
+            <ChartErrorBoundary resetKey={loadKey} onRetry={retry}>
+              <FinancialChart
+                width={size.width}
+                height={size.height}
+                seriesName={`${symbol}-${interval}`}
+                bars={shownBars}
+                intraday={interval !== "1d"}
+                chartType={chartType}
+                indicators={indicators}
+                tool={tool}
+                trends={indexed.trends}
+                fibs={indexed.fibs}
+                onTrendsChange={(trends) => saveDrawings({ ...drawings, trends: trends.map((d) => storeTrend(d, shownBars, step)) })}
+                onFibsChange={(fibs) => saveDrawings({ ...drawings, fibs: fibs.map((d) => storeFib(d, shownBars, step)) })}
+                onToolDone={() => setTool("cursor")}
+                palette={palette}
+                fontFamily={fontFamily}
+              />
+            </ChartErrorBoundary>
           </div>
         )}
-        {!history && <div className="absolute inset-0 grid place-items-center text-sm text-muted">Loading {symbol}…</div>}
-        {history?.error && (
-          <div className="absolute left-3 top-3 rounded-md border border-down/40 bg-surface px-3 py-2 text-xs text-down">
-            History unavailable: {history.error}. {bars?.length ? "" : "Waiting for live ticks…"}
-          </div>
+        {(!current || current.status === "retrying") && (
+          <ChartLoading
+            symbol={symbol}
+            note={current?.status === "retrying" ? `Angel One is busy (1 request/second). Retrying… (${current.attempt}/${RETRY_DELAYS.length})` : null}
+          />
         )}
+        {current?.status === "failed" &&
+          (shownBars?.length ? (
+            <div className="absolute right-3 top-3 z-10 flex items-center gap-3 rounded-lg border border-down/40 bg-surface px-3 py-2 text-xs shadow-lg">
+              <span className="text-down">Price history unavailable; showing live ticks only.</span>
+              <button onClick={retry} className="font-medium text-accent hover:underline">
+                Retry
+              </button>
+            </div>
+          ) : (
+            <div className="absolute inset-0 grid place-items-center p-6">
+              <div className="max-w-sm rounded-xl border border-border bg-surface p-5 text-center shadow-lg">
+                <div className="text-sm font-medium">Couldn&apos;t load {symbol} price history</div>
+                <p className="mt-1 text-xs text-muted">{current.error}</p>
+                <button onClick={retry} className="mt-4 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-fg">
+                  Retry
+                </button>
+              </div>
+            </div>
+          ))}
       </div>
     </div>
   );
+}
+
+/** Animated placeholder candles while history loads (or waits on Angel One's rate limit). */
+function ChartLoading({ symbol, note }: { symbol: string; note: string | null }) {
+  const heights = [38, 52, 44, 60, 48, 70, 56, 64, 46, 58, 72, 50, 62, 54];
+  return (
+    <div className="absolute inset-0 grid place-items-center" role="status" aria-live="polite">
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex h-20 items-end gap-1.5">
+          {heights.map((h, i) => (
+            <span
+              key={i}
+              className={`w-2 animate-pulse rounded-sm ${i % 3 === 1 ? "bg-down/50" : "bg-up/50"}`}
+              style={{ height: `${h}%`, animationDelay: `${i * 90}ms`, animationDuration: "1.2s" }}
+            />
+          ))}
+        </div>
+        <div className="text-center">
+          <div className="text-sm text-muted">Loading {symbol}…</div>
+          {note && <div className="mt-1 text-xs text-muted">{note}</div>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type BoundaryProps = { resetKey: string; onRetry: () => void; children: React.ReactNode };
+
+/** Keeps a chart failure inside the chart area instead of taking down the page. */
+class ChartErrorBoundary extends Component<BoundaryProps, { error: Error | null; key: string }> {
+  state = { error: null as Error | null, key: this.props.resetKey };
+
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+
+  static getDerivedStateFromProps(props: BoundaryProps, state: { error: Error | null; key: string }) {
+    // A new symbol/interval/retry gets a fresh chart.
+    return props.resetKey !== state.key ? { error: null, key: props.resetKey } : null;
+  }
+
+  componentDidCatch(error: Error) {
+    console.error("Chart render failed:", error);
+  }
+
+  render() {
+    if (!this.state.error) return this.props.children;
+    return (
+      <div className="grid h-full place-items-center p-6">
+        <div className="max-w-sm rounded-xl border border-border bg-surface p-5 text-center">
+          <div className="text-sm font-medium">The chart hit an error</div>
+          <p className="mt-1 break-words font-mono text-xs text-muted">{this.state.error.message}</p>
+          <button onClick={this.props.onRetry} className="mt-4 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-fg">
+            Reload chart
+          </button>
+        </div>
+      </div>
+    );
+  }
 }
 
 const TOOLS: { id: DrawingTool; label: string; icon: string }[] = [

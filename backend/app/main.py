@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.broker.base import BrokerError
+from app.broker.ratelimit import Cancelled
 from app.config import settings
 from app.db import init_db
 from app.engine import engine
@@ -18,6 +19,17 @@ from app.routers import auth, broker, market, trading
 from app.routers import settings as settings_router
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+
+
+class _DropClientResets(logging.Filter):
+    """On Windows, asyncio logs a full traceback whenever a browser drops a connection
+    (e.g. a cancelled request when clicking quickly between stocks). It's harmless."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        return not (record.exc_info and isinstance(record.exc_info[1], ConnectionResetError))
+
+
+logging.getLogger("asyncio").addFilter(_DropClientResets())
 
 
 @asynccontextmanager
@@ -47,6 +59,12 @@ app.add_middleware(
 @app.exception_handler(BrokerError)
 async def broker_error(_: Request, exc: BrokerError) -> JSONResponse:
     return JSONResponse({"detail": str(exc)}, status_code=400)
+
+
+@app.exception_handler(Cancelled)
+async def cancelled(_: Request, exc: Cancelled) -> JSONResponse:
+    # The browser already moved on; nobody reads this response.
+    return JSONResponse({"detail": "Request abandoned"}, status_code=499)
 
 
 @app.get("/api/health")

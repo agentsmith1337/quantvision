@@ -21,31 +21,68 @@ export class ApiError extends Error {
 /** Fired when the backend says the session is gone; the auth gate listens for it. */
 export const UNAUTHORIZED_EVENT = "qv:unauthorized";
 
-async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
-  const init: RequestInit = { method, credentials: "include" };
+// --- In-flight tracking (drives the top progress bar) --------------------------
+
+let inflight = 0;
+const inflightListeners = new Set<() => void>();
+const setInflight = (n: number) => {
+  inflight = n;
+  inflightListeners.forEach((cb) => cb());
+};
+export const inflightStore = {
+  get: () => inflight,
+  subscribe: (cb: () => void) => {
+    inflightListeners.add(cb);
+    return () => inflightListeners.delete(cb);
+  },
+};
+
+export type RequestOptions = {
+  signal?: AbortSignal;
+  /** Background refreshes don't show the progress bar. */
+  background?: boolean;
+};
+
+export function isAbortError(e: unknown): boolean {
+  return e instanceof DOMException && e.name === "AbortError";
+}
+
+async function request<T>(method: string, path: string, body?: unknown, opts: RequestOptions = {}): Promise<T> {
+  const init: RequestInit = { method, credentials: "include", signal: opts.signal };
   if (body instanceof FormData) {
     init.body = body;
   } else if (body !== undefined) {
     init.body = JSON.stringify(body);
     init.headers = { "Content-Type": "application/json" };
   }
-  const res = await fetch(API_BASE + path, init);
-  if (!res.ok) {
-    const data = await res.json().catch(() => null);
-    let message = `${res.status} ${res.statusText}`;
-    if (typeof data?.detail === "string") message = data.detail;
-    else if (Array.isArray(data?.detail) && data.detail[0]?.msg) message = String(data.detail[0].msg).replace(/^Value error, /, "");
-    if (res.status === 401 && !path.startsWith("/api/auth/")) window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
-    throw new ApiError(res.status, message);
+  if (!opts.background) setInflight(inflight + 1);
+  try {
+    const res = await fetch(API_BASE + path, init);
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      let message = `${res.status} ${res.statusText}`;
+      if (typeof data?.detail === "string") message = data.detail;
+      else if (Array.isArray(data?.detail) && data.detail[0]?.msg) message = String(data.detail[0].msg).replace(/^Value error, /, "");
+      if (res.status === 401 && !path.startsWith("/api/auth/")) window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
+      throw new ApiError(res.status, message);
+    }
+    return (await res.json()) as T;
+  } finally {
+    if (!opts.background) setInflight(inflight - 1);
   }
-  return res.json() as Promise<T>;
 }
 
-export const apiGet = <T>(path: string) => request<T>("GET", path);
+export const apiGet = <T>(path: string, opts?: RequestOptions) => request<T>("GET", path, undefined, opts);
 export const apiPost = <T>(path: string, body?: unknown) => request<T>("POST", path, body ?? {});
 export const apiPut = <T>(path: string, body: unknown) => request<T>("PUT", path, body);
 export const apiPatch = <T>(path: string, body: unknown) => request<T>("PATCH", path, body);
 export const apiDelete = <T>(path: string) => request<T>("DELETE", path);
+
+/** Errors worth retrying automatically: Angel One rate limits and transient upstream failures. */
+export function isTransient(e: unknown): boolean {
+  if (!(e instanceof ApiError)) return !isAbortError(e); // network blip
+  return e.status === 429 || e.status === 502 || e.status === 503 || (e.status === 400 && /rate-limit|access rate/i.test(e.message));
+}
 
 export type Instrument = {
   symbol: string;
