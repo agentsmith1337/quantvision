@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "@/lib/auth";
 import { BrokerStatusProvider, useBrokerStatus } from "@/lib/broker-status";
 import { ExecutionSidecard } from "./execution-sidecard";
 import { FeedBadge } from "./feed-badge";
+import { SymbolSearch } from "./symbol-search";
 
 type NavItem = { href: string; label: string; icon: string; phase?: number };
 
@@ -148,7 +149,9 @@ function Shell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center justify-end gap-3 border-b border-border bg-surface px-4">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
+          <GlobalSearch />
+          <div className="flex-1" />
           <ModeBadge />
           <FeedBadge />
           <ProfileMenu />
@@ -156,6 +159,35 @@ function Shell({ children }: { children: React.ReactNode }) {
         <main className="min-h-0 flex-1 overflow-auto">{children}</main>
       </div>
     </div>
+  );
+}
+
+const SEARCH_ID = "qv-global-search";
+
+/** One stock search for the whole app: picking a result opens it in the Trading view. */
+function GlobalSearch() {
+  const router = useRouter();
+
+  // "/" focuses the search from anywhere (unless the user is typing in a field).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (target.closest("input, textarea, select, [contenteditable=true]")) return;
+      e.preventDefault();
+      document.getElementById(SEARCH_ID)?.focus();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  return (
+    <SymbolSearch
+      id={SEARCH_ID}
+      className="w-full max-w-md"
+      placeholder="Search stocks and indices…  ( / )"
+      onSelect={(inst) => router.push(`/trade/?symbol=${encodeURIComponent(inst.symbol)}`)}
+    />
   );
 }
 

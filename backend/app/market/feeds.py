@@ -112,6 +112,9 @@ class AngelOneFeed(MarketFeed):
                 ws.on_data = lambda _app, data: self._on_data(data)
                 ws.on_error = lambda *args: log.warning("Angel One WebSocket error: %s", args)
                 ws.on_close = lambda _app: None
+                # The SDK's own close handler has the wrong signature for websocket-client
+                # (it logs a TypeError on every close); replace it.
+                ws._on_close = lambda _app, *_: None
                 self._ws = ws
                 connected_at = time.monotonic()
                 ws.connect()  # blocks until the socket closes

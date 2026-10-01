@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IndexCard, WatchlistRow } from "@/components/quotes";
 import { SymbolSearch } from "@/components/symbol-search";
@@ -122,7 +121,6 @@ function Watchlist() {
 }
 
 export default function PortfolioPage() {
-  const router = useRouter();
   const holdings = useApi<{ mode: TradingMode; holdings: Holding[] }>("/api/portfolio/holdings", { refreshOnOrders: true, intervalMs: 60_000 });
   const positions = useApi<{ mode: TradingMode; positions: Position[] }>("/api/portfolio/positions", { refreshOnOrders: true, intervalMs: 30_000 });
   const funds = useApi<{ mode: TradingMode; funds: Funds }>("/api/portfolio/funds", { refreshOnOrders: true, intervalMs: 60_000 });
@@ -138,8 +136,6 @@ export default function PortfolioPage() {
           <IndexCard key={i.symbol} {...i} />
         ))}
       </div>
-
-      <SymbolSearch placeholder="Search any NSE stock to open its chart…" onSelect={(i) => router.push(`/trade/?symbol=${i.symbol}`)} />
 
       {mode === "paper" && (
         <p className="rounded-lg bg-accent/10 px-4 py-2 text-xs text-accent">

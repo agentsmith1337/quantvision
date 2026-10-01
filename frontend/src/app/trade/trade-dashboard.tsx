@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, type Dispatch, type SetStateAction } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { PriceChart, type ChartType, type IndicatorId } from "@/components/price-chart";
 import { OrderTicket } from "@/components/order-ticket";
 import { OrdersPanel } from "@/components/orders-panel";
-import { SymbolSearch } from "@/components/symbol-search";
 import { type Instrument, type Interval } from "@/lib/api";
 import { useApi } from "@/lib/use-api";
 import { useTick } from "@/lib/market-socket";
@@ -71,7 +70,6 @@ function Segmented<T extends string>({ options, value, onChange }: { options: { 
 
 export function TradeDashboard() {
   const symbol = (useSearchParams().get("symbol") ?? "NIFTY").toUpperCase();
-  const router = useRouter();
   const [interval, setBarInterval] = useState<Interval>("1m");
   const [chartType, setChartType] = useState<ChartType>("candles");
   const [indicators, setIndicators] = useState<ReadonlySet<IndicatorId>>(() => new Set<IndicatorId>(["volume", "ema20", "ema50"]));
@@ -101,7 +99,6 @@ export function TradeDashboard() {
               </div>
             ))}
           </dl>
-          <SymbolSearch className="ml-auto w-56" placeholder="Switch symbol…" onSelect={(i) => router.push(`/trade/?symbol=${i.symbol}`)} />
         </div>
         <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2">
           <IndicatorToggles value={indicators} onChange={setIndicators} />

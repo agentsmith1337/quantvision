@@ -7,12 +7,13 @@ type Props = {
   onSelect: (inst: Instrument) => void;
   placeholder?: string;
   className?: string;
+  id?: string;
 };
 
 /** Debounced instrument search (Angel One search when connected, built-ins otherwise). */
-export function SymbolSearch({ onSelect, placeholder = "Search stocks…", className = "" }: Props) {
+export function SymbolSearch({ onSelect, placeholder = "Search stocks…", className = "", id }: Props) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<{ query: string; items: Instrument[] } | null>(null);
+  const [results, setResults] = useState<{ query: string; items: Instrument[]; error?: string } | null>(null);
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState(false);
   const listId = useId();
@@ -29,7 +30,7 @@ export function SymbolSearch({ onSelect, placeholder = "Search stocks…", class
           setResults({ query: q, items });
           setActive(0);
         })
-        .catch(() => !cancelled && setResults({ query: q, items: [] }));
+        .catch((e: Error) => !cancelled && setResults({ query: q, items: [], error: e.message }));
     }, 300);
     return () => {
       cancelled = true;
@@ -48,12 +49,17 @@ export function SymbolSearch({ onSelect, placeholder = "Search stocks…", class
     onSelect(inst);
     setQuery("");
     setOpen(false);
+    (document.activeElement as HTMLElement | null)?.blur();
   };
 
   return (
     <div ref={boxRef} className={`relative ${className}`}>
       <input
+        id={id}
         value={query}
+        maxLength={32}
+        autoComplete="off"
+        spellCheck={false}
         onChange={(e) => {
           setQuery(e.target.value);
           setOpen(true);
@@ -76,7 +82,8 @@ export function SymbolSearch({ onSelect, placeholder = "Search stocks…", class
       {open && query.trim().length >= 2 && (
         <ul id={listId} role="listbox" className="absolute z-40 mt-1 max-h-80 w-full overflow-auto rounded-lg border border-border bg-surface py-1 shadow-xl">
           {results?.query !== query.trim() && <li className="px-3 py-2 text-xs text-muted">Searching…</li>}
-          {results?.query === query.trim() && items.length === 0 && <li className="px-3 py-2 text-xs text-muted">No matches</li>}
+          {results?.query === query.trim() && results.error && <li className="px-3 py-2 text-xs text-down">Search failed: {results.error}</li>}
+          {results?.query === query.trim() && !results.error && items.length === 0 && <li className="px-3 py-2 text-xs text-muted">No matches</li>}
           {items.map((inst, i) => (
             <li
               key={inst.symbol}
