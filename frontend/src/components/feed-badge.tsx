@@ -6,9 +6,9 @@ export function FeedBadge() {
   const status = useFeedStatus();
 
   let dot = "bg-down";
-  let label = "Backend offline";
+  let label = "Engine offline";
   if (status) {
-    const source = status.mode === "angelone" ? "Angel One" : "Simulated";
+    const source = status.mode === "angelone" ? "Angel One" : status.mode === "simulated" ? "Simulated" : "Market data";
     label = status.state === "connected" ? `${source} · live` : `${source} · ${status.state}`;
     dot = status.state === "connected" ? (status.mode === "angelone" ? "bg-up" : "bg-accent") : "bg-down";
   }

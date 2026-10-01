@@ -10,9 +10,9 @@ import zlib
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta, timezone
 
-from app.config import Settings
+from app.broker.base import BrokerError
 from app.market.hub import FeedStatus, MarketHub, Tick
-from app.market.instruments import BY_TOKEN, INSTRUMENTS, Instrument
+from app.market.instruments import Instrument, registry
 
 log = logging.getLogger(__name__)
 
@@ -40,6 +40,8 @@ class MarketFeed(ABC):
         self.hub = hub
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
+        self._wanted: dict[str, Instrument] = {i.symbol: i for i in registry.builtin()}
+        self._wanted_lock = threading.Lock()
 
     def start(self) -> None:
         self._thread = threading.Thread(target=self._run, name=f"{self.mode}-feed", daemon=True)
@@ -47,6 +49,21 @@ class MarketFeed(ABC):
 
     def stop(self) -> None:
         self._stop.set()
+
+    def ensure_subscribed(self, instruments: list[Instrument]) -> None:
+        with self._wanted_lock:
+            new = [i for i in instruments if i.symbol not in self._wanted]
+            for i in new:
+                self._wanted[i.symbol] = i
+        if new:
+            self._subscribe(new)
+
+    def _subscribe(self, instruments: list[Instrument]) -> None:
+        """Start streaming newly wanted instruments (no-op if not connected yet)."""
+
+    def wanted(self) -> list[Instrument]:
+        with self._wanted_lock:
+            return list(self._wanted.values())
 
     def _status(self, state: str, message: str = "") -> None:
         self.hub.set_status_threadsafe(FeedStatus(self.mode, state, message))
@@ -62,13 +79,11 @@ class MarketFeed(ABC):
 class AngelOneFeed(MarketFeed):
     mode = "angelone"
 
-    def __init__(self, hub: MarketHub, settings: Settings) -> None:
+    def __init__(self, hub: MarketHub, session) -> None:
         super().__init__(hub)
-        self.settings = settings
-        self._api = None  # SmartConnect, set after login
-        self._api_lock = threading.Lock()
+        self.session = session  # app.broker.angel.AngelSession
         self._ws = None
-        self._prev_close: dict[str, float] = {}
+        self._ws_open = False
 
     def stop(self) -> None:
         super().stop()
@@ -78,31 +93,6 @@ class AngelOneFeed(MarketFeed):
             except Exception:
                 pass
 
-    def _login(self):
-        import pyotp
-        from SmartApi import SmartConnect
-
-        s = self.settings
-        api = SmartConnect(api_key=s.angel_api_key)
-        totp = pyotp.TOTP(s.angel_totp_secret).now()
-        res = api.generateSession(s.angel_client_code, s.angel_pin, totp)
-        if not res or not res.get("status"):
-            raise RuntimeError(f"Angel One login failed: {res.get('message') if res else 'no response'}")
-        with self._api_lock:
-            self._api = api
-            self._load_prev_closes(api)
-        return api
-
-    def _load_prev_closes(self, api) -> None:
-        for inst in INSTRUMENTS:
-            try:
-                res = api.ltpData(inst.exchange, inst.trading_symbol, inst.token)
-                if res and res.get("status"):
-                    self._prev_close[inst.symbol] = float(res["data"]["close"])
-            except Exception as e:
-                log.warning("previous close for %s unavailable: %s", inst.symbol, e)
-            time.sleep(0.12)  # stay under Angel One's ~10 req/s LTP limit
-
     def _run(self) -> None:
         from SmartApi.smartWebSocketV2 import SmartWebSocketV2
 
@@ -110,12 +100,12 @@ class AngelOneFeed(MarketFeed):
         while not self._stop.is_set():
             self._status("connecting")
             try:
-                api = self._login()
+                self.session.login()
                 ws = SmartWebSocketV2(
-                    api.access_token,
-                    self.settings.angel_api_key,
-                    self.settings.angel_client_code,
-                    api.getfeedToken(),
+                    self.session.access_token,
+                    self.session.api_key,
+                    self.session.client_code,
+                    self.session.feed_token,
                     max_retry_attempt=0,  # reconnects (with a fresh login) are handled by this loop
                 )
                 ws.on_open = lambda _app: self._on_open(ws)
@@ -125,24 +115,40 @@ class AngelOneFeed(MarketFeed):
                 self._ws = ws
                 connected_at = time.monotonic()
                 ws.connect()  # blocks until the socket closes
+                self._ws_open = False
                 if time.monotonic() - connected_at > 60:
                     backoff = 5
                 if self._stop.is_set():
                     break
                 self._status("disconnected", f"Connection lost; reconnecting in {backoff}s")
             except Exception as e:
-                log.exception("Angel One feed failed")
+                self._ws_open = False
+                log.warning("Angel One feed failed: %s", e)
                 self._status("error", f"{e}. Retrying in {backoff}s")
             self._stop.wait(backoff)
             backoff = min(backoff * 2, 120)
 
     def _on_open(self, ws) -> None:
-        # Quote mode carries day open/high/low and previous close (indices included).
-        ws.subscribe("qvquote", ws.QUOTE, _token_list(INSTRUMENTS))
+        self._ws_open = True
+        self._send_subscribe(ws, self.wanted())
         self._status("connected")
 
+    def _subscribe(self, instruments: list[Instrument]) -> None:
+        if self._ws is not None and self._ws_open:
+            self._send_subscribe(self._ws, instruments)
+
+    @staticmethod
+    def _send_subscribe(ws, instruments: list[Instrument]) -> None:
+        by_exchange: dict[int, list[str]] = {}
+        for i in instruments:
+            by_exchange.setdefault(i.exchange_type, []).append(i.token)
+        # Quote mode carries day open/high/low and previous close (indices included).
+        for ex, tokens in by_exchange.items():
+            for chunk in range(0, len(tokens), 50):
+                ws.subscribe("qvquote", ws.QUOTE, [{"exchangeType": ex, "tokens": tokens[chunk:chunk + 50]}])
+
     def _on_data(self, data: dict) -> None:
-        inst = BY_TOKEN.get((data.get("exchange_type"), str(data.get("token"))))
+        inst = registry.by_token(data.get("exchange_type"), str(data.get("token")))
         if inst is None or "last_traded_price" not in data:
             return
 
@@ -153,17 +159,15 @@ class AngelOneFeed(MarketFeed):
             symbol=inst.symbol,
             ltp=data["last_traded_price"] / 100,
             ts=int(data.get("exchange_timestamp") or time.time() * 1000),
-            prev_close=rupees("closed_price") or self._prev_close.get(inst.symbol),
+            prev_close=rupees("closed_price"),
             open=rupees("open_price_of_the_day"),
             high=rupees("high_price_of_the_day"),
             low=rupees("low_price_of_the_day"),
-            volume=data.get("volume_trade_for_the_day"),
+            volume=data.get("volume_trade_for_the_day") or None,
         )
         self.hub.publish_threadsafe(tick)
 
     def candles(self, inst: Instrument, interval: str, days: int) -> list[dict]:
-        if self._api is None:
-            raise FeedUnavailable("Not logged in to Angel One yet")
         name, _, max_days = INTERVALS[interval]
         to = datetime.now(IST)
         frm = to - timedelta(days=min(days, max_days))
@@ -174,24 +178,14 @@ class AngelOneFeed(MarketFeed):
             "fromdate": frm.strftime("%Y-%m-%d %H:%M"),
             "todate": to.strftime("%Y-%m-%d %H:%M"),
         }
-        with self._api_lock:
-            res = self._api.getCandleData(params)
-        if not res or not res.get("status"):
-            raise FeedUnavailable(f"Angel One candle request failed: {res.get('message') if res else 'no response'}")
+        try:
+            rows = self.session.data("getCandleData", params) or []
+        except BrokerError as e:
+            raise FeedUnavailable(f"Angel One candle request failed: {e}") from e
         return [
-            {
-                "time": int(datetime.fromisoformat(ts).timestamp()),
-                "open": o, "high": h, "low": l, "close": c, "volume": v,
-            }
-            for ts, o, h, l, c, v in res.get("data") or []
+            {"time": int(datetime.fromisoformat(ts).timestamp()), "open": o, "high": h, "low": l, "close": c, "volume": v}
+            for ts, o, h, l, c, v in rows
         ]
-
-
-def _token_list(insts: list[Instrument]) -> list[dict]:
-    by_exchange: dict[int, list[str]] = {}
-    for i in insts:
-        by_exchange.setdefault(i.exchange_type, []).append(i.token)
-    return [{"exchangeType": ex, "tokens": toks} for ex, toks in by_exchange.items()]
 
 
 # Rough reference levels so simulated prices look plausible.
@@ -201,8 +195,14 @@ _SIM_BASE = {
 }
 
 
+def _sim_base(symbol: str) -> float:
+    if symbol in _SIM_BASE:
+        return _SIM_BASE[symbol]
+    return float(50 + zlib.crc32(symbol.encode()) % 3000)
+
+
 class SimulatedFeed(MarketFeed):
-    """Random-walk prices for every instrument, one tick per second each."""
+    """Random-walk prices for every wanted instrument, one tick per second each."""
 
     mode = "simulated"
     VOLATILITY = 0.0006  # per-second standard deviation, as a fraction of price
@@ -211,18 +211,22 @@ class SimulatedFeed(MarketFeed):
         super().__init__(hub)
         self._lock = threading.Lock()
         self._rng = random.Random()
-        self._state = {}
-        for inst in INSTRUMENTS:
-            p = _SIM_BASE.get(inst.symbol, 1000.0)
-            self._state[inst.symbol] = {"prev_close": p, "open": p, "high": p, "low": p, "ltp": p, "volume": 0}
+        self._state: dict[str, dict] = {}
+
+    def _st(self, symbol: str) -> dict:
+        st = self._state.get(symbol)
+        if st is None:
+            p = _sim_base(symbol)
+            st = self._state[symbol] = {"prev_close": p, "open": p, "high": p, "low": p, "ltp": p, "volume": 0}
+        return st
 
     def _run(self) -> None:
-        self._status("connected", "Simulated prices. Add Angel One credentials to backend/.env for live data.")
+        self._status("connected", "Simulated prices. Add Angel One credentials in Settings for live data.")
         while not self._stop.wait(1.0):
             now_ms = int(time.time() * 1000)
-            for inst in INSTRUMENTS:
+            for inst in self.wanted():
                 with self._lock:
-                    st = self._state[inst.symbol]
+                    st = self._st(inst.symbol)
                     st["ltp"] = round(st["ltp"] * (1 + self._rng.gauss(0, self.VOLATILITY)), 2)
                     st["high"] = max(st["high"], st["ltp"])
                     st["low"] = min(st["low"], st["ltp"])
@@ -236,7 +240,7 @@ class SimulatedFeed(MarketFeed):
         _, step, _ = INTERVALS[interval]
         count = min(days * 86400 // step, 1500)
         with self._lock:
-            last = self._state[inst.symbol]["ltp"]
+            last = self._st(inst.symbol)["ltp"]
         # Walk backwards from the current price so history joins the live ticks.
         # A per-symbol seed keeps the shape stable across reloads.
         rng = random.Random(zlib.crc32(f"{inst.symbol}:{interval}".encode()))
@@ -255,12 +259,3 @@ class SimulatedFeed(MarketFeed):
             close = open_
         bars.reverse()
         return bars
-
-
-def create_feed(hub: MarketHub, settings: Settings) -> MarketFeed:
-    mode = settings.market_data
-    if mode == "angelone" or (mode == "auto" and settings.angel_configured):
-        if not settings.angel_configured:
-            raise RuntimeError("QV_MARKET_DATA=angelone but ANGEL_* credentials are missing in backend/.env")
-        return AngelOneFeed(hub, settings)
-    return SimulatedFeed(hub)

@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
@@ -31,8 +32,8 @@ class Tick:
 
 @dataclass
 class FeedStatus:
-    mode: str  # "angelone" | "simulated"
-    state: str  # "connecting" | "connected" | "disconnected" | "error"
+    mode: str  # "angelone" | "simulated" | "none"
+    state: str  # "locked" | "connecting" | "connected" | "disconnected" | "error"
     message: str = ""
 
     def to_message(self) -> dict[str, Any]:
@@ -51,7 +52,10 @@ class MarketHub:
         self._clients: set[_Client] = set()
         self._last_ticks: dict[str, Tick] = {}
         self._loop: asyncio.AbstractEventLoop | None = None
-        self.status = FeedStatus(mode="simulated", state="disconnected")
+        self._tick_listeners: list[Callable[[Tick], None]] = []
+        self.status = FeedStatus(mode="none", state="locked", message="Sign in to connect")
+        # Called with newly requested symbols so the engine can subscribe upstream.
+        self.on_demand: Callable[[set[str]], None] = lambda symbols: None
 
     def bind_loop(self, loop: asyncio.AbstractEventLoop) -> None:
         self._loop = loop
@@ -65,6 +69,24 @@ class MarketHub:
     def set_status_threadsafe(self, status: FeedStatus) -> None:
         if self._loop and not self._loop.is_closed():
             self._loop.call_soon_threadsafe(self.set_status, status)
+
+    def broadcast_threadsafe(self, msg: dict[str, Any]) -> None:
+        """Send a message (e.g. an order update) to every connected UI."""
+        if self._loop and not self._loop.is_closed():
+            self._loop.call_soon_threadsafe(self.broadcast, msg)
+
+    def add_tick_listener(self, fn: Callable[[Tick], None]) -> None:
+        self._tick_listeners.append(fn)
+
+    def remove_tick_listener(self, fn: Callable[[Tick], None]) -> None:
+        if fn in self._tick_listeners:
+            self._tick_listeners.remove(fn)
+
+    def demanded_symbols(self) -> set[str]:
+        return {s for c in self._clients for s in c.symbols}
+
+    def clear_ticks(self) -> None:
+        self._last_ticks.clear()
 
     # --- event loop side ----------------------------------------------------------
 
@@ -80,6 +102,15 @@ class MarketHub:
         for client in self._clients:
             if tick.symbol in client.symbols:
                 self._enqueue(client, msg)
+        for fn in self._tick_listeners:
+            try:
+                fn(tick)
+            except Exception:
+                log.exception("tick listener failed")
+
+    def broadcast(self, msg: dict[str, Any]) -> None:
+        for client in self._clients:
+            self._enqueue(client, msg)
 
     def set_status(self, status: FeedStatus) -> None:
         self.status = status
@@ -112,7 +143,10 @@ class MarketHub:
                 req = await ws.receive_json()
                 symbols = {str(s).upper() for s in req.get("symbols", [])}
                 if req.get("op") == "subscribe":
+                    new = symbols - self.demanded_symbols()
                     client.symbols |= symbols
+                    if new:
+                        self.on_demand(new)
                     for s in symbols:
                         if tick := self._last_ticks.get(s):
                             self._enqueue(client, tick.to_message())

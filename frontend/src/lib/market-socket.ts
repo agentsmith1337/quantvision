@@ -1,7 +1,7 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-import { wsUrl } from "./api";
+import { useEffect, useRef, useSyncExternalStore } from "react";
+import { wsUrl, type Order, type TradingMode } from "./api";
 
 export type Tick = {
   symbol: string;
@@ -17,28 +17,46 @@ export type Tick = {
 };
 
 export type FeedStatus = {
-  mode: "angelone" | "simulated";
-  state: "connecting" | "connected" | "disconnected" | "error";
+  mode: "angelone" | "simulated" | "none";
+  state: "locked" | "connecting" | "connected" | "disconnected" | "error";
   message: string;
 };
 
+export type OrderEvent = { broker: TradingMode; order: Order };
+
 type TickListener = (tick: Tick) => void;
+type OrderListener = (event: OrderEvent) => void;
 
 /**
- * One shared WebSocket to the local backend (/ws/market). Components subscribe
- * per symbol; the socket subscribes upstream to the union and reconnects on loss.
+ * One shared WebSocket to the local backend (/ws/market), authenticated by the
+ * session cookie. Components subscribe per symbol; the socket subscribes
+ * upstream to the union, carries order updates, and reconnects on loss.
  */
 class MarketSocket {
   private ws: WebSocket | null = null;
+  private enabled = false;
   private listeners = new Map<string, Set<TickListener>>();
+  private orderListeners = new Set<OrderListener>();
   private statusListeners = new Set<() => void>();
   private ticks = new Map<string, Tick>();
   private retryMs = 1000;
+  private retryTimer: ReturnType<typeof setTimeout> | null = null;
   private connected = false;
   status: FeedStatus | null = null;
 
+  /** Connect only while signed in; toggling reconnects with the current cookie. */
+  setEnabled(enabled: boolean) {
+    if (enabled === this.enabled) return;
+    this.enabled = enabled;
+    if (this.retryTimer) clearTimeout(this.retryTimer);
+    this.ws?.close();
+    this.ws = null;
+    this.ticks.clear();
+    if (enabled) this.ensureOpen();
+  }
+
   private ensureOpen() {
-    if (this.ws || typeof window === "undefined") return;
+    if (this.ws || !this.enabled || typeof window === "undefined") return;
     const ws = new WebSocket(wsUrl("/ws/market"));
     this.ws = ws;
     ws.onopen = () => {
@@ -55,13 +73,16 @@ class MarketSocket {
       } else if (msg.type === "status") {
         this.status = { mode: msg.mode, state: msg.state, message: msg.message };
         this.statusListeners.forEach((cb) => cb());
+      } else if (msg.type === "order") {
+        this.orderListeners.forEach((cb) => cb({ broker: msg.broker, order: msg.order }));
       }
     };
     ws.onclose = () => {
+      if (this.ws !== ws) return; // replaced by setEnabled
       this.ws = null;
       this.setConnected(false);
-      if (this.listeners.size || this.statusListeners.size) {
-        setTimeout(() => this.ensureOpen(), this.retryMs);
+      if (this.enabled) {
+        this.retryTimer = setTimeout(() => this.ensureOpen(), this.retryMs);
         this.retryMs = Math.min(this.retryMs * 2, 10_000);
       }
     };
@@ -94,6 +115,12 @@ class MarketSocket {
         this.send("unsubscribe", symbol);
       }
     };
+  }
+
+  subscribeOrders(cb: OrderListener): () => void {
+    this.orderListeners.add(cb);
+    this.ensureOpen();
+    return () => this.orderListeners.delete(cb);
   }
 
   lastTick(symbol: string): Tick | undefined {
@@ -129,4 +156,13 @@ export function useFeedStatus(): FeedStatus | null {
     () => (marketSocket.isConnected ? marketSocket.status : null),
     () => null,
   );
+}
+
+/** Run `cb` for every order update pushed by the engine. */
+export function useOrderEvents(cb: OrderListener) {
+  const ref = useRef(cb);
+  useEffect(() => {
+    ref.current = cb;
+  });
+  useEffect(() => marketSocket.subscribeOrders((e) => ref.current(e)), []);
 }

@@ -20,7 +20,9 @@ This roadmap focuses on building a locally-hosted desktop application using Next
 *   Integrate Monaco Editor into the UI (Dashboard and Backtest Studio).
 *   Develop the local execution engine: FastAPI dynamically spawns a Python subprocess to run user scripts.
 *   Develop the QuantVision Python SDK (a simplified wrapper around Angel One API) for users to import into their scripts.
-*   **Milestone:** Users can write and execute basic Python trading scripts directly on their machine from the UI.
+*   Integrate **Gnews** and **Mediastack** APIs into FastAPI to fetch and serve stock-specific news.
+*   Build the "Live News Feed" tab below the main trading chart in the UI.
+*   **Milestone:** Users can write basic Python scripts, and view real-time news for the selected stock.
 
 ## Phase 4: Backtesting Sandbox
 *   Integrate `Backtrader` into the execution engine.

@@ -1,19 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
+import { API_BASE } from "@/lib/api";
+import { AuthProvider, useAuth } from "@/lib/auth";
+import { BrokerStatusProvider, useBrokerStatus } from "@/lib/broker-status";
+import { ExecutionSidecard } from "./execution-sidecard";
 import { FeedBadge } from "./feed-badge";
 
 type NavItem = { href: string; label: string; icon: string; phase?: number };
 
 const NAV: NavItem[] = [
   { href: "/", label: "Home", icon: "M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" },
-  { href: "/portfolio/", label: "Portfolio", icon: "M4 7h16v12H4zM9 7V5h6v2M4 12h16", phase: 2 },
+  { href: "/portfolio/", label: "Portfolio", icon: "M4 7h16v12H4zM9 7V5h6v2M4 12h16" },
   { href: "/trade/", label: "Trading Dashboard", icon: "M4 19V5m0 14h16M8 15l3-4 3 2 5-6" },
   { href: "/backtest/", label: "Backtesting Studio", icon: "M8 6 3 12l5 6M16 6l5 6-5 6M13.5 4l-3 16", phase: 4 },
 ];
+
+const PUBLIC_ROUTES = ["/signin", "/setup"];
 
 function Icon({ d, className = "size-5" }: { d: string; className?: string }) {
   return (
@@ -48,6 +54,46 @@ const sidebarPref = {
 };
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <AuthGate>{children}</AuthGate>
+    </AuthProvider>
+  );
+}
+
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { status, error } = useAuth();
+  const pathname = usePathname();
+  const router = useRouter();
+  const isPublic = PUBLIC_ROUTES.some((r) => pathname.startsWith(r));
+
+  // Where this visitor should be, given their session state.
+  let target: string | null = null;
+  if (status && !status.setup_complete && !pathname.startsWith("/setup")) target = "/setup/";
+  else if (status && status.setup_complete && !status.signed_in && !pathname.startsWith("/signin")) target = "/signin/";
+  else if (status?.signed_in && pathname.startsWith("/signin")) target = "/";
+
+  useEffect(() => {
+    if (target) router.replace(target);
+  }, [target, router]);
+
+  if (error) return <Splash>{error}</Splash>;
+  if (!status || target) return <Splash>Loading…</Splash>;
+  if (!status.signed_in && isPublic) return <>{children}</>;
+
+  return (
+    <BrokerStatusProvider>
+      <Shell>{children}</Shell>
+      <ExecutionSidecard />
+    </BrokerStatusProvider>
+  );
+}
+
+function Splash({ children }: { children: React.ReactNode }) {
+  return <div className="grid h-dvh place-items-center p-6 text-center text-sm text-muted">{children}</div>;
+}
+
+function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const collapsed = useSyncExternalStore(sidebarPref.subscribe, sidebarPref.get, () => false);
   const toggle = () => sidebarPref.set(!collapsed);
@@ -102,7 +148,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center justify-end gap-4 border-b border-border bg-surface px-4">
+        <header className="flex h-14 shrink-0 items-center justify-end gap-3 border-b border-border bg-surface px-4">
+          <ModeBadge />
           <FeedBadge />
           <ProfileMenu />
         </header>
@@ -112,16 +159,46 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+export function ModeBadge({ className = "" }: { className?: string }) {
+  const { status } = useBrokerStatus();
+  if (!status) return null;
+  const live = status.trading_mode === "live";
+  return (
+    <Link
+      href="/setup/#preferences"
+      title={live ? "Orders go to Angel One with real money" : "Orders are simulated against live prices; no real money"}
+      className={`rounded-full px-3 py-1 text-xs font-semibold tracking-wide ${live ? "bg-down/15 text-down ring-1 ring-down/40" : "bg-accent/15 text-accent"} ${className}`}
+    >
+      {live ? "LIVE TRADING" : "PAPER TRADING"}
+    </Link>
+  );
+}
+
 const THEMES = [
   { id: "day", label: "Day" },
   { id: "evening", label: "Evening" },
   { id: "dark", label: "Dark" },
 ];
 
+export function Avatar({ size = "size-9" }: { size?: string }) {
+  const { status, avatarVersion } = useAuth();
+  const user = status?.user;
+  if (user?.has_avatar) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={`${API_BASE}/api/auth/avatar?v=${avatarVersion}`} alt="" className={`${size} rounded-full object-cover`} />;
+  }
+  return (
+    <span className={`${size} flex items-center justify-center rounded-full bg-accent text-sm font-semibold uppercase text-accent-fg`}>
+      {(user?.username ?? "QV").slice(0, 2)}
+    </span>
+  );
+}
+
 function ProfileMenu() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
+  const { status, signOut } = useAuth();
 
   useEffect(() => {
     if (!open) return;
@@ -137,29 +214,29 @@ function ProfileMenu() {
     };
   }, [open]);
 
+  const item = "flex w-full items-center rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-2";
+
   return (
     <div className="relative" ref={ref}>
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="flex size-9 items-center justify-center rounded-full bg-accent text-sm font-semibold text-accent-fg ring-offset-2 ring-offset-surface hover:ring-2 hover:ring-accent/40"
-        aria-label="Account options"
-        aria-expanded={open}
-      >
-        QV
+      <button onClick={() => setOpen((o) => !o)} className="rounded-full ring-offset-2 ring-offset-surface hover:ring-2 hover:ring-accent/40" aria-label="Account options" aria-expanded={open}>
+        <Avatar />
       </button>
       {open && (
         <div className="absolute right-0 top-11 z-50 w-64 rounded-xl border border-border bg-surface p-2 shadow-xl">
-          <div className="px-3 py-2">
-            <div className="text-sm font-medium">Local user</div>
-            <div className="text-xs text-muted">Sign-in and profiles arrive in Phase 2</div>
+          <div className="flex items-center gap-3 px-3 py-2">
+            <Avatar size="size-8" />
+            <div className="min-w-0">
+              <div className="truncate text-sm font-medium">{status?.user?.username}</div>
+              <div className="text-xs text-muted">Local account</div>
+            </div>
           </div>
           <div className="my-1 border-t border-border" />
-          {["Settings", "API Configuration"].map((label) => (
-            <div key={label} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-muted/60">
-              {label}
-              <span className="text-[10px]">Phase 2</span>
-            </div>
-          ))}
+          <Link href="/setup/" className={item} onClick={() => setOpen(false)}>
+            Settings
+          </Link>
+          <Link href="/setup/#broker" className={item} onClick={() => setOpen(false)}>
+            API Configuration
+          </Link>
           <div className="my-1 border-t border-border" />
           <div className="px-3 pb-1 pt-2 text-xs text-muted">Theme</div>
           <div className="grid grid-cols-3 gap-1 px-2 pb-2">
@@ -174,7 +251,9 @@ function ProfileMenu() {
             ))}
           </div>
           <div className="my-1 border-t border-border" />
-          <div className="rounded-lg px-3 py-2 text-sm text-muted/60">Sign out</div>
+          <button className={`${item} text-down`} onClick={() => void signOut()}>
+            Sign out
+          </button>
         </div>
       )}
     </div>

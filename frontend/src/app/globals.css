@@ -66,3 +66,14 @@ body {
   background: var(--bg);
   color: var(--fg);
 }
+
+@keyframes qv-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

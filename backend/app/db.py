@@ -24,6 +24,21 @@ def init_db() -> None:
     from app import models  # noqa: F401  (registers tables on Base.metadata)
 
     Base.metadata.create_all(engine)
+    _migrate()
+
+
+def _migrate() -> None:
+    """Add columns introduced after a table was first created (SQLite has no auto-migrate)."""
+    from sqlalchemy import inspect, text
+
+    added = {"users": {"vault_salt": "VARCHAR(64)"}}
+    insp = inspect(engine)
+    with engine.begin() as conn:
+        for table, columns in added.items():
+            existing = {c["name"] for c in insp.get_columns(table)}
+            for name, ddl in columns.items():
+                if name not in existing:
+                    conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {name} {ddl}"))
 
 
 def get_session() -> Iterator[Session]:

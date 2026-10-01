@@ -1,3 +1,4 @@
+cryptography==50.0.2
 fastapi[standard]==0.142.2
 logzero==1.7.0
 PyOTP==2.10.0

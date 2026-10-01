@@ -39,7 +39,10 @@ This is the core operational screen for monitoring live markets, manual trading,
 
 *   **Left Column (Market Data & Analysis):**
     *   **Top Area (Price Graph):** Integrated `react-financial-charts` for candlestick rendering, drawing tools (trendlines, Fibonacci), and native technical overlays.
-    *   **Bottom Area (Analysis Dual-Mode):** A tabbed component situated below the chart (Technical Metrics vs. AI Analysis).
+    *   **Bottom Area (Analysis Tri-Mode):** A tabbed component situated below the chart.
+        *   *Mode 1 (Technical Metrics):* Displays calculated technical indicators and standard market values.
+        *   *Mode 2 (Live News Feed):* A real-time stream of financial news articles relevant to the current stock, powered by the **Gnews** and **Mediastack** APIs.
+        *   *Mode 3 (AI Analysis):* An AI interface (future development) that digests the news feed to provide instant sentiment analysis.
 *   **Right Column (Execution & History):**
     *   **Top Area (Trade History):** A real-time scrolling feed of executed trades.
     *   **Bottom Area (Action Center Dual-Mode):** A tabbed component for taking action.

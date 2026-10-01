@@ -12,22 +12,38 @@ const INDICES = [
 
 const FEATURES = [
   { title: "Live market data", body: "Angel One SmartAPI ticks streamed into interactive charts with indicators (EMA, Bollinger, RSI, MACD) and drawing tools.", phase: 1 },
-  { title: "Portfolio & manual trading", body: "Holdings, positions and P&L in real time, with an order ticket for manual trades.", phase: 2 },
+  { title: "Portfolio & manual trading", body: "Holdings, positions and P&L in real time, an order ticket for manual trades, and paper trading to practise risk-free.", phase: 1 },
   { title: "Algo IDE", body: "Write Python strategies in a Monaco editor with built-in indicators and a safe trading SDK.", phase: 3 },
   { title: "Backtesting studio", body: "Run strategies against cached historical data with Backtrader and review the equity curve.", phase: 4 },
-  { title: "Local execution", body: "Everything runs on your machine; your keys and scripts never leave it.", phase: 1 },
+  { title: "Local execution", body: "Everything runs on your machine; your broker keys are encrypted with your password and never leave it.", phase: 1 },
   { title: "AI copilot & news analyst", body: "LLM help for writing strategies and sentiment signals from financial news.", phase: 6 },
 ];
 
 const QUICK_START = [
   <>
-    Copy <code>backend/.env.example</code> to <code>backend/.env</code> and fill in your Angel One API key, client code, MPIN and TOTP secret.
+    Add your Angel One API credentials and static IP under{" "}
+    <Link href="/setup/#broker" className="text-accent underline-offset-2 hover:underline">
+      Settings → API configuration
+    </Link>
+    .
   </>,
   <>
-    Run <code>python run.py</code> from the project folder. Without credentials the app uses simulated prices.
+    Practise on the{" "}
+    <Link href="/trade/?symbol=NIFTY" className="text-accent underline-offset-2 hover:underline">
+      Trading Dashboard
+    </Link>{" "}
+    in paper mode: orders fill against live prices with virtual cash.
   </>,
   <>
-    Open the <Link href="/trade/?symbol=NIFTY" className="text-accent underline-offset-2 hover:underline">Trading Dashboard</Link> to watch live candles.
+    Track holdings, positions and your watchlist on the{" "}
+    <Link href="/portfolio/" className="text-accent underline-offset-2 hover:underline">
+      Portfolio
+    </Link>{" "}
+    page, then switch to live trading in{" "}
+    <Link href="/setup/#preferences" className="text-accent underline-offset-2 hover:underline">
+      Preferences
+    </Link>
+    .
   </>,
 ];
 
