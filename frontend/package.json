@@ -10,11 +10,11 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "lightweight-charts": "^5.2.1",
     "next": "16.3.8",
     "next-themes": "^0.4.6",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-financial-charts": "^2.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -25,5 +25,10 @@
     "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "react": "$react",
+    "react-dom": "$react-dom",
+    "d3-color": "^3.1.0"
   }
 }

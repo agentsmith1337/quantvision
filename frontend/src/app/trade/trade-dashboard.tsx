@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useSearchParams } from "next/navigation";
-import { PriceChart, type ChartType } from "@/components/price-chart";
+import { PriceChart, type ChartType, type IndicatorId } from "@/components/price-chart";
 import { WatchlistRow } from "@/components/quotes";
 import { apiGet, type Instrument, type Interval } from "@/lib/api";
 import { useTick } from "@/lib/market-socket";
@@ -11,10 +11,44 @@ import { changeColor, formatChange, formatPrice } from "@/lib/format";
 const INTERVALS: Interval[] = ["1m", "5m", "15m", "1h", "1d"];
 const CHART_TYPES: { id: ChartType; label: string }[] = [
   { id: "candles", label: "Candles" },
+  { id: "heikin-ashi", label: "Heikin-Ashi" },
   { id: "bars", label: "Bars" },
   { id: "line", label: "Line" },
   { id: "area", label: "Area" },
 ];
+const INDICATORS: { id: IndicatorId; label: string }[] = [
+  { id: "volume", label: "Volume" },
+  { id: "ema20", label: "EMA 20" },
+  { id: "ema50", label: "EMA 50" },
+  { id: "sma200", label: "SMA 200" },
+  { id: "bollinger", label: "Bollinger" },
+  { id: "rsi", label: "RSI" },
+  { id: "macd", label: "MACD" },
+];
+
+function IndicatorToggles({ value, onChange }: { value: ReadonlySet<IndicatorId>; onChange: Dispatch<SetStateAction<ReadonlySet<IndicatorId>>> }) {
+  const toggle = (id: IndicatorId) =>
+    onChange((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  return (
+    <div className="flex flex-wrap gap-1">
+      {INDICATORS.map((i) => (
+        <button
+          key={i.id}
+          onClick={() => toggle(i.id)}
+          aria-pressed={value.has(i.id)}
+          className={`rounded-md border px-2 py-0.5 text-xs ${value.has(i.id) ? "border-accent/50 bg-accent/15 text-accent" : "border-border text-muted hover:text-fg"}`}
+        >
+          {i.label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 function Segmented<T extends string>({ options, value, onChange }: { options: { id: T; label: string }[]; value: T; onChange: (v: T) => void }) {
   return (
@@ -36,6 +70,7 @@ export function TradeDashboard() {
   const symbol = (useSearchParams().get("symbol") ?? "NIFTY").toUpperCase();
   const [interval, setBarInterval] = useState<Interval>("1m");
   const [chartType, setChartType] = useState<ChartType>("candles");
+  const [indicators, setIndicators] = useState<ReadonlySet<IndicatorId>>(() => new Set<IndicatorId>(["volume", "ema20", "ema50"]));
   const [instruments, setInstruments] = useState<Instrument[]>([]);
   const [watchlist, setWatchlist] = useState<string[]>([]);
   const tick = useTick(symbol);
@@ -76,8 +111,11 @@ export function TradeDashboard() {
             <Segmented options={CHART_TYPES} value={chartType} onChange={setChartType} />
           </div>
         </div>
+        <div className="border-b border-border px-4 py-2">
+          <IndicatorToggles value={indicators} onChange={setIndicators} />
+        </div>
         <div className="min-h-0 flex-1">
-          <PriceChart key={symbol} symbol={symbol} interval={interval} chartType={chartType} />
+          <PriceChart key={`${symbol}:${interval}`} symbol={symbol} interval={interval} chartType={chartType} indicators={indicators} />
         </div>
       </section>
 

@@ -4,7 +4,7 @@
 
 Since this application is designed to run natively on the user's local machine, the architecture avoids complex server infrastructure and prioritizes a zero-installation, portable database approach.
 
-*   **Frontend UI:** **Next.js (React) - Static Export.** Next.js will be used to build the rich UI (TradingView charts, Monaco Editor). It will be compiled to a static Single Page Application (SPA).
+*   **Frontend UI:** **Next.js (React) - Static Export.** Next.js will be used to build the rich UI (`react-financial-charts` charting with indicators and drawing tools, Monaco Editor). It will be compiled to a static Single Page Application (SPA).
 *   **Core Backend & Execution Engine:** **Python (FastAPI).** Python will act as the local brain of the application. It will serve the Next.js static files, maintain the WebSocket connection to Angel One, and directly execute the user's algorithmic scripts.
 *   **Database & Storage:** **SQLite + Local File System.** 
     *   *SQLite:* A lightweight, zero-installation relational database. Used to store user configurations, encrypted API keys, and metadata (like the file paths to saved scripts).

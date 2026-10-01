@@ -11,7 +11,7 @@ const INDICES = [
 ];
 
 const FEATURES = [
-  { title: "Live market data", body: "Angel One SmartAPI ticks streamed through your local engine into TradingView charts.", phase: 1 },
+  { title: "Live market data", body: "Angel One SmartAPI ticks streamed into interactive charts with indicators (EMA, Bollinger, RSI, MACD) and drawing tools.", phase: 1 },
   { title: "Portfolio & manual trading", body: "Holdings, positions and P&L in real time, with an order ticket for manual trades.", phase: 2 },
   { title: "Algo IDE", body: "Write Python strategies in a Monaco editor with built-in indicators and a safe trading SDK.", phase: 3 },
   { title: "Backtesting studio", body: "Run strategies against cached historical data with Backtrader and review the equity curve.", phase: 4 },
