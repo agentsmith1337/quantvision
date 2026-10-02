@@ -16,7 +16,8 @@ from app.engine import SCRIP_MASTER_CACHE, engine
 from app.market.hub import hub
 from app.market.instruments import registry
 from app.market.scripmaster import scripmaster
-from app.routers import auth, broker, market, trading
+from app.routers import auth, broker, market, news, scripts, trading
+from app.scripts import service as scripts_service
 from app.routers import settings as settings_router
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -41,8 +42,10 @@ async def lifespan(app: FastAPI):
     scripmaster.on_update(registry.apply_company_names)
     scripmaster.ensure_fresh(SCRIP_MASTER_CACHE)
     hub.bind_loop(asyncio.get_running_loop())
+    scripts_service.start()
     # The engine starts at sign-in, once the credential vault can be decrypted.
     yield
+    scripts_service.stop()
     engine.stop()
 
 
@@ -81,6 +84,8 @@ app.include_router(broker.router)
 app.include_router(market.router)
 app.include_router(market.ws_router)
 app.include_router(trading.router)
+app.include_router(scripts.router)
+app.include_router(news.router)
 app.include_router(settings_router.router)
 
 # Mounted last so /api and /ws routes take precedence over the static UI.

@@ -1,4 +1,5 @@
 import os
+import sys
 import tempfile
 import time
 
@@ -13,6 +14,8 @@ os.environ.update({
     "QV_FRONTEND_DIST": os.path.join(_home, "no-ui"),
     # Present-but-empty keys stop backend/.env from leaking real credentials into tests.
     "ANGEL_API_KEY": "", "ANGEL_CLIENT_CODE": "", "ANGEL_PIN": "", "ANGEL_TOTP_SECRET": "",
+    # Run strategy scripts with this interpreter instead of building the sandbox venv.
+    "QV_SCRIPT_PYTHON": sys.executable,
 })
 
 from datetime import datetime  # noqa: E402
@@ -60,3 +63,17 @@ def wait_for(fn, timeout: float = 5.0):
             return value
         time.sleep(0.1)
     raise AssertionError("timed out")
+
+
+def signin(client) -> None:
+    """Sign in regardless of what earlier test modules did (throttle, password change)."""
+    from app.security import sessions
+
+    sessions._failures.clear()
+    if not client.get("/api/auth/status").json()["setup_complete"]:
+        assert client.post("/api/auth/setup", json=USER).status_code == 200
+        return
+    for password in (USER["password"], "an even better passphrase"):
+        if client.post("/api/auth/signin", json={**USER, "password": password}).status_code == 200:
+            return
+    raise AssertionError("couldn't sign in")

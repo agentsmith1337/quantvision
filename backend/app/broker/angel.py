@@ -234,6 +234,7 @@ class AngelBroker(Broker):
             message=d.get("text") or "",
             updated_at=_iso(d.get("exchorderupdatetime") or d.get("updatetime")),
             variety=d.get("variety", "NORMAL"),
+            source=d.get("ordertag") if str(d.get("ordertag") or "").startswith("qvrun") else "manual",
         )
 
     def orders(self) -> list[Order]:
@@ -276,7 +277,7 @@ class AngelBroker(Broker):
             "quantity": str(req.quantity),
             "squareoff": "0",
             "stoploss": "0",
-            "ordertag": "quantvision",
+            "ordertag": req.tag or "quantvision",
         }
         data = self.s.data("placeOrder", params) or {}
         self._cache.invalidate()
@@ -287,7 +288,8 @@ class AngelBroker(Broker):
         except BrokerError:
             # Accepted but not yet in the order book; report what we sent.
             return Order(order_id, inst.symbol, req.side, req.order_type, req.product, req.validity, req.quantity, 0,
-                         req.price, req.trigger_price, None, "put order req received", "", datetime.now(IST).isoformat(), variety)
+                         req.price, req.trigger_price, None, "put order req received", "", datetime.now(IST).isoformat(), variety,
+                         source=req.tag or "manual")
 
     def _find_fresh(self, order_id: str) -> Order:
         self._cache.invalidate("orderBook")

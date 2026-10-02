@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ApiError, apiDelete, apiPost, type Order, type Trade } from "@/lib/api";
 import { formatPrice } from "@/lib/format";
+import { useScripts } from "@/lib/scripts-store";
 import { useApi } from "@/lib/use-api";
 import { ConfirmDialog } from "./confirm-dialog";
 
@@ -12,6 +13,15 @@ const fmtTime = (iso: string) => {
   const d = new Date(iso);
   return Number.isNaN(d.getTime()) ? iso : timeFmt.format(d);
 };
+
+function ScriptBadge({ tag }: { tag: string }) {
+  const script = useScripts((st) => st.runs.find((r) => r.tag === tag)?.script);
+  return (
+    <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[10px] text-muted" title={script ? `Placed by ${script}` : "Placed by a script"}>
+      script{script ? `: ${script.replace(/\.py$/, "")}` : ""}
+    </span>
+  );
+}
 
 function StatusChip({ status }: { status: string }) {
   const tone =
@@ -106,6 +116,7 @@ export function OrdersPanel({ symbol }: { symbol?: string }) {
                         {o.symbol}
                       </Link>
                       <StatusChip status={o.status} />
+                      {o.source?.startsWith("qvrun") && <ScriptBadge tag={o.source} />}
                     </div>
                     <div className="mt-0.5 text-xs text-muted">
                       {o.filled_quantity}/{o.quantity} · {o.order_type}

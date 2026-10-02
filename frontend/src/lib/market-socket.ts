@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useSyncExternalStore } from "react";
-import { wsUrl, type Order, type TradingMode } from "./api";
+import { wsUrl, type LogEntry, type Order, type RunInfo, type TradingMode } from "./api";
 
 export type Tick = {
   symbol: string;
@@ -23,9 +23,11 @@ export type FeedStatus = {
 };
 
 export type OrderEvent = { broker: TradingMode; order: Order };
+export type ScriptEvent = { kind: "run"; run: RunInfo } | { kind: "log"; runId: string; entry: LogEntry };
 
 type TickListener = (tick: Tick) => void;
 type OrderListener = (event: OrderEvent) => void;
+type ScriptListener = (event: ScriptEvent) => void;
 
 /**
  * One shared WebSocket to the local backend (/ws/market), authenticated by the
@@ -37,6 +39,7 @@ class MarketSocket {
   private enabled = false;
   private listeners = new Map<string, Set<TickListener>>();
   private orderListeners = new Set<OrderListener>();
+  private scriptListeners = new Set<ScriptListener>();
   private statusListeners = new Set<() => void>();
   private ticks = new Map<string, Tick>();
   private retryMs = 1000;
@@ -75,6 +78,10 @@ class MarketSocket {
         this.statusListeners.forEach((cb) => cb());
       } else if (msg.type === "order") {
         this.orderListeners.forEach((cb) => cb({ broker: msg.broker, order: msg.order }));
+      } else if (msg.type === "script_run") {
+        this.scriptListeners.forEach((cb) => cb({ kind: "run", run: msg.run }));
+      } else if (msg.type === "script_log") {
+        this.scriptListeners.forEach((cb) => cb({ kind: "log", runId: msg.run_id, entry: msg.entry }));
       }
     };
     ws.onclose = () => {
@@ -121,6 +128,12 @@ class MarketSocket {
     this.orderListeners.add(cb);
     this.ensureOpen();
     return () => this.orderListeners.delete(cb);
+  }
+
+  subscribeScripts(cb: ScriptListener): () => void {
+    this.scriptListeners.add(cb);
+    this.ensureOpen();
+    return () => this.scriptListeners.delete(cb);
   }
 
   lastTick(symbol: string): Tick | undefined {

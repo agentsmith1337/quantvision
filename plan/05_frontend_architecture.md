@@ -37,11 +37,12 @@ The application will utilize a persistent global layout wrapper (`layout.tsx` in
 ### 2.4. Trading Dashboard Page (`/trade/[symbol]`)
 This is the core operational screen for monitoring live markets, manual trading, and rapid script editing.
 
+*   **Layout Constraint:** The dashboard will utilize a **horizontally resizable split-pane** (e.g., using `react-resizable-panels`). This allows the user to click and drag the boundary between the Left Column (Chart) and the Right Column (Code/Orders) to adjust their widths dynamically.
 *   **Left Column (Market Data & Analysis):**
     *   **Top Area (Price Graph):** Integrated `react-financial-charts` for candlestick rendering, drawing tools (trendlines, Fibonacci), and native technical overlays.
     *   **Bottom Area (Analysis Tri-Mode):** A tabbed component situated below the chart.
         *   *Mode 1 (Technical Metrics):* Displays calculated technical indicators and standard market values.
-        *   *Mode 2 (Live News Feed):* A real-time stream of financial news articles relevant to the current stock, powered by the **Gnews** API.
+        *   *Mode 2 (Live News Feed):* A real-time stream of financial news articles powered by the **Gnews** API. **UI Features: Includes an editable search input allowing the user to manually refine the news query, an "Expand to Full Screen" button, and utilizes native page scrolling (the page grows with the content) rather than a hidden internal scrollbar.**
         *   *Mode 3 (AI Analysis):* An AI interface (future development) that digests the news feed to provide instant sentiment analysis.
 *   **Right Column (Execution & History):**
     *   **Top Area (Trade History):** A real-time scrolling feed of executed trades.

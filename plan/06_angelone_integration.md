@@ -61,17 +61,53 @@ Symbol search does **not** call SmartAPI's `searchScrip()` (rate-limited to roug
 6.  `searchScrip()` remains only as a fallback when no copy of the file has ever been downloaded.
 
 ## 7. Algorithmic Script Wrapper & Wrapping Engine
-To provide a simple, TradingView-like coding experience while retaining the power of `Backtrader`, we will implement a **Dynamic Wrapping Engine** in the FastAPI backend.
+To provide a simple, TradingView-like coding experience while retaining the power of `Backtrader`, users write **one plain function**, `on_candle`, and QuantVision runs it everywhere: paper trading, live trading and (Phase 4) backtests.
 
-1.  **Technical Indicators (`pandas-ta`):** Angel One does not provide technical indicators. We will bundle the open-source `pandas-ta` library into the QuantVision Python SDK, giving users instant access to 130+ indicators without calculating them from scratch.
-2.  **The Wrapper:** Users write a very simple function in the IDE. When they click "Run", FastAPI dynamically generates the complex `Backtrader` Class in the background, injects the user's logic, and handles the raw Angel One API calls automatically.
+### 7.1 Engines
+1.  **Technical Indicators (`pandas-ta-classic`):** Angel One does not provide technical indicators. The SDK bundles `pandas-ta-classic` (the maintained, MIT-licensed fork of `pandas-ta`, same API, 190+ indicators; the original `pandas-ta` does not install on Python 3.14).
+2.  **Live / paper runs:** QuantVision's own runner. The engine builds candles from the live tick stream and calls the user's `on_candle` as each candle closes. Orders go through the same broker, risk limits and kill switch as manual trading, and follow the **global Paper/Live switch** (if the switch is changed while a script runs, its next orders use the new mode).
+3.  **Backtests (Phase 4):** FastAPI generates a `Backtrader` strategy class that wraps the *same* `on_candle` function, so a script runs unchanged in a backtest.
+
+### 7.2 The script contract
+A script is a `.py` file in `Documents/QuantVision/scripts/`. A strategy is **not limited to one stock**: each run has a *universe* of up to 20 symbols and one candle interval.
 
 ```python
-# Example of what a user's script will look like in the IDE
+# Optional defaults for the Run dialog (editable there).
+SYMBOLS = ["RELIANCE", "TCS", "INFY"]
+INTERVAL = "5m"            # 1m, 5m, 15m, 1h or 1d
+
 def on_candle(candle, indicators, api):
-    # 'indicators' uses pandas-ta under the hood. 'api' handles raw Angel One calls safely.
-    sma_20 = indicators.sma(period=20)
-    
-    if candle.close > sma_20:
-        api.buy(quantity=10)
+    # Called once for every closed candle of every symbol in the universe.
+    # candle.symbol says which stock this candle belongs to.
+    sma_20 = indicators.sma(period=20)          # this candle's stock
+    nifty_rsi = indicators.rsi(period=14, symbol="NIFTY")  # any stock in the universe
+
+    if candle.close > sma_20 and api.position() == 0:
+        api.buy(quantity=10)                    # buys candle.symbol
+    if api.position("TCS") > 0 and nifty_rsi > 70:
+        api.sell(quantity=api.position("TCS"), symbol="TCS")
 ```
+
+*   **Required:** `on_candle(candle, indicators, api)`.
+*   **Optional hooks:** `on_start(api)` (once, before the first candle), `on_order(order, api)` (an order of this run filled, was rejected or cancelled), `on_stop(api)` (once, when the run ends).
+*   **Optional constants:** `SYMBOLS`, `INTERVAL` pre-fill the Run dialog.
+*   **Default symbol:** inside `on_candle`, every `indicators.*` and `api.*` call that takes `symbol=` defaults to `candle.symbol`. Other stocks must be in the run's universe.
+*   **Candle order:** when several stocks' candles close at the same time, `on_candle` is called for each in universe order. A stock's candle closes at the end of its interval (even if no trade happened in the last seconds); intraday intervals are aligned to the 09:15 IST market open.
+
+**`candle`**: `symbol`, `time` (IST `datetime` of the candle start), `open`, `high`, `low`, `close`, `volume`.
+
+**`indicators`**: values for the **latest closed candle**, calculated with `pandas-ta-classic` on that stock's history (the run starts with ~300 historical candles per stock):
+*   `sma(period, symbol=None)`, `ema`, `wma`, `rsi`, `atr`, `vwap(symbol=None)` → a number (or `None` while not enough history).
+*   `macd(fast=12, slow=26, signal=9)` → `.macd`, `.signal`, `.histogram`; `bbands(period=20, std=2)` → `.upper`, `.middle`, `.lower`; `stoch(k=14, d=3, smooth_k=3)` → `.k`, `.d`; `supertrend(period=7, multiplier=3)` → `.value`, `.direction` (1 up, -1 down); `adx(period=14)` → `.adx`, `.plus_di`, `.minus_di`.
+*   `df(symbol=None)` → the full OHLCV `pandas.DataFrame`, for any other `pandas-ta-classic` indicator (`indicators.df().ta.cci(length=20)`).
+
+**`api`**: the only way a script reaches the broker. The script never sees credentials.
+*   `buy(quantity, symbol=None, order_type="MARKET", price=None, trigger_price=None, product="DELIVERY")`, `sell(...)` → the order (`.order_id`, `.status`, `.average_price`, …). `product="INTRADAY"` for margin/shorting.
+*   `position(symbol=None)` → net quantity held (holdings + today's positions; negative when short).
+*   `orders()`, `cancel(order_id)`, `cancel_all()`, `funds()` (`.available_cash`), `ltp(symbol=None)`, `history(symbol=None, n=100)` (DataFrame), `log(*values)` (also `print()`), `mode` (`"paper"` or `"live"`).
+
+### 7.3 Safety rules (enforced by the engine, not the SDK)
+*   Every script order passes the same checks as manual orders: max order value, max orders per minute, static-IP check for live.
+*   Each run is additionally limited to **10 orders per minute**; exceeding it rejects the order with an error the script can see.
+*   The **Kill switch** stops every running script and cancels all open orders.
+*   Scripts run in a separate Python process and virtual environment (`QV_HOME/runtime`), with no broker credentials in their environment. An exception inside `on_candle` is logged and the run continues; 5 consecutive failures stop the run.

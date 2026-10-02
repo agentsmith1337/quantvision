@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* Three palettes, switched by next-themes via <html data-theme="...">. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -15,6 +16,7 @@
   --accent-fg: #ffffff;
   --up: #0f9d58;
   --down: #d93025;
+  --warn: #b45309;
   color-scheme: light;
 }
 
@@ -29,6 +31,7 @@
   --accent-fg: #2a2420;
   --up: #8fbf7f;
   --down: #e07a5f;
+  --warn: #f2cc8f;
   color-scheme: dark;
 }
 
@@ -43,6 +46,7 @@
   --accent-fg: #0b0d10;
   --up: #26a69a;
   --down: #ef5350;
+  --warn: #f6c344;
   color-scheme: dark;
 }
 
@@ -57,6 +61,7 @@
   --color-accent-fg: var(--accent-fg);
   --color-up: var(--up);
   --color-down: var(--down);
+  --color-warn: var(--warn);
   --font-sans: var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-outfit), var(--font-google-sans), sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;

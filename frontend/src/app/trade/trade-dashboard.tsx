@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PriceChart, type ChartType, type IndicatorId } from "@/components/price-chart";
 import { ChartTypeSelect, IndicatorMenu } from "@/components/chart-controls";
+import { AnalysisPanel } from "@/components/analysis-panel";
 import { OrderTicket } from "@/components/order-ticket";
+import { QuickScript } from "@/components/scripts/quick-script";
 import { OrdersPanel } from "@/components/orders-panel";
 import { type Instrument, type Interval } from "@/lib/api";
 import { useApi } from "@/lib/use-api";
@@ -38,8 +40,9 @@ export function TradeDashboard() {
   const tick = useTick(symbol);
 
   return (
-    <div className="flex h-full min-h-[640px] gap-4 p-4">
-      <section className="flex min-w-0 flex-1 flex-col rounded-xl border border-border bg-surface">
+    <div className="flex h-full min-h-[780px] gap-4 p-4">
+      <div className="flex min-w-0 flex-1 flex-col gap-4">
+      <section className="flex min-h-0 flex-1 flex-col rounded-xl border border-border bg-surface">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-border px-4 py-3">
           <div>
             <div className="flex items-baseline gap-2">
@@ -71,6 +74,10 @@ export function TradeDashboard() {
           <PriceChart key={`${symbol}:${interval}`} symbol={symbol} interval={interval} chartType={chartType} indicators={indicators} />
         </div>
       </section>
+      <section className="h-64 shrink-0 overflow-hidden rounded-xl border border-border bg-surface">
+        <AnalysisPanel symbol={symbol} interval={interval} />
+      </section>
+      </div>
 
       <aside className="flex w-[22rem] shrink-0 flex-col gap-4 overflow-y-auto">
         <div className="flex min-h-56 flex-1 flex-col rounded-xl border border-border bg-surface">
@@ -89,11 +96,7 @@ export function TradeDashboard() {
             ))}
           </div>
           <div className="p-4">
-            {action === "manual" ? (
-              <OrderTicket key={symbol} symbol={symbol} isIndex={inst?.is_index ?? false} />
-            ) : (
-              <p className="py-6 text-center text-sm text-muted">The scripting IDE arrives in Phase 3.</p>
-            )}
+            {action === "manual" ? <OrderTicket key={symbol} symbol={symbol} isIndex={inst?.is_index ?? false} /> : <QuickScript symbol={symbol} />}
           </div>
         </div>
       </aside>

@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "@/lib/auth";
 import { BrokerStatusProvider, useBrokerStatus } from "@/lib/broker-status";
 import { ActivityBar } from "./activity-bar";
 import { ExecutionSidecard } from "./execution-sidecard";
+import { KillSwitch, ScriptEventsBridge } from "./scripts/kill-switch";
 import { FeedBadge } from "./feed-badge";
 import { SymbolSearch } from "./symbol-search";
 
@@ -18,7 +19,8 @@ const NAV: NavItem[] = [
   { href: "/", label: "Home", icon: "M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" },
   { href: "/portfolio/", label: "Portfolio", icon: "M4 7h16v12H4zM9 7V5h6v2M4 12h16" },
   { href: "/trade/", label: "Trading Dashboard", icon: "M4 19V5m0 14h16M8 15l3-4 3 2 5-6" },
-  { href: "/backtest/", label: "Backtesting Studio", icon: "M8 6 3 12l5 6M16 6l5 6-5 6M13.5 4l-3 16", phase: 4 },
+  { href: "/backtest/", label: "Backtesting Studio", icon: "M8 6 3 12l5 6M16 6l5 6-5 6M13.5 4l-3 16" },
+  { href: "/docs/", label: "API Docs", icon: "M5 4h10l4 4v12H5zM14 4v5h5M8 13h8M8 17h6" },
 ];
 
 const PUBLIC_ROUTES = ["/signin", "/setup"];
@@ -87,6 +89,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     <BrokerStatusProvider>
       <Shell>{children}</Shell>
       <ExecutionSidecard />
+      <ScriptEventsBridge />
     </BrokerStatusProvider>
   );
 }
@@ -153,6 +156,7 @@ function Shell({ children }: { children: React.ReactNode }) {
         <header className="relative flex h-14 shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
           <GlobalSearch />
           <div className="flex-1" />
+          <KillSwitch />
           <ModeBadge />
           <FeedBadge />
           <ProfileMenu />

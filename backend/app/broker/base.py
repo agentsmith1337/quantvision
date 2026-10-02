@@ -35,6 +35,8 @@ class OrderRequest(BaseModel):
     price: float | None = Field(default=None, gt=0)
     trigger_price: float | None = Field(default=None, gt=0)
     amo: bool = False  # after-market order
+    # Set by the engine for script orders ("qvrun<id>"); Angel One stores it as the order tag.
+    tag: str | None = Field(default=None, max_length=20, pattern=r"^[A-Za-z0-9]+$")
 
     @model_validator(mode="after")
     def _check_prices(self) -> "OrderRequest":
@@ -77,6 +79,7 @@ class Order:
     message: str
     updated_at: str  # ISO 8601
     variety: str = "NORMAL"
+    source: str = "manual"  # "manual" or the tag of the script run that placed it
 
     @property
     def is_open(self) -> bool:

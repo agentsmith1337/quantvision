@@ -1,2 +1,3 @@
 -r requirements.txt
+-r sdk/runtime-requirements.txt
 pytest==9.1.1

@@ -9,6 +9,7 @@ import threading
 import time
 import urllib.request
 from collections import deque
+from collections.abc import Callable
 from datetime import datetime, timedelta, timezone
 
 from app import prefs
@@ -53,6 +54,10 @@ class Engine:
         self._known_orders: dict[str, tuple] = {}
         self._search_cache: dict[str, list[Instrument]] = {}
         self._ip_cache: tuple[float, dict] | None = None
+        # Hooks for the script run manager (and anything else that follows the engine).
+        self.order_listeners: list[Callable[[Order], None]] = []
+        self.mode_listeners: list[Callable[[str], None]] = []
+        self.stop_listeners: list[Callable[[], None]] = []
         hub.on_demand = self._on_demand
 
     # --- lifecycle --------------------------------------------------------------
@@ -81,6 +86,11 @@ class Engine:
             log.info("engine started (%s feed, %s trading)", self.feed.mode, self.trading_mode)
 
     def stop(self) -> None:
+        for fn in list(self.stop_listeners):
+            try:
+                fn()
+            except Exception:
+                log.exception("stop listener failed")
         with self._lock:
             self._poll_stop.set()
             if self.feed:
@@ -111,6 +121,8 @@ class Engine:
             raise BrokerError("Live trading needs Angel One credentials (Settings → API configuration)")
         prefs.put("trading_mode", mode)
         self._known_orders.clear()
+        for fn in list(self.mode_listeners):
+            fn(self.trading_mode)
         return self.trading_mode
 
     def place_order(self, req: OrderRequest) -> Order:
@@ -163,6 +175,18 @@ class Engine:
 
     def _broadcast_order(self, order: Order) -> None:
         self.hub.broadcast_threadsafe({"type": "order", "broker": self.trading_mode, "order": order.to_dict()})
+        for fn in list(self.order_listeners):
+            try:
+                fn(order)
+            except Exception:
+                log.exception("order listener failed")
+
+    def position(self, symbol: str) -> int:
+        """Net quantity of `symbol`: holdings plus today's positions (negative when short)."""
+        broker = self.broker
+        held = sum(h.quantity for h in broker.holdings() if h.symbol == symbol)
+        today = sum(p.net_quantity for p in broker.positions() if p.symbol == symbol)
+        return held + today
 
     def _poll_loop(self, stop: threading.Event) -> None:
         """Angel One doesn't stream order status; poll the order book and push changes."""
@@ -194,6 +218,9 @@ class Engine:
 
     def _on_demand(self, symbols: set[str]) -> None:
         self._ensure_streaming(self._resolve(symbols))
+
+    def ensure_streaming(self, instruments: list[Instrument]) -> None:
+        self._ensure_streaming(instruments)
 
     def _ensure_streaming(self, instruments: list[Instrument]) -> None:
         if self.feed and instruments:

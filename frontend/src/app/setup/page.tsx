@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Avatar } from "@/components/app-shell";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { ApiError, apiDelete, apiGet, apiPost, apiPut, type Prefs } from "@/lib/api";
+import { ApiError, apiDelete, apiGet, apiPost, apiPut, type Prefs, type RuntimeStatus } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { useBrokerStatus } from "@/lib/broker-status";
 import { useApi } from "@/lib/use-api";
@@ -538,6 +538,109 @@ function PreferenceSettings() {
   );
 }
 
+type NewsConfig = { configured: boolean; api_key: string | null; usage: { today: number; limit: number } };
+
+function NewsSettings() {
+  const config = useApi<NewsConfig>("/api/news/config");
+  const [key, setKey] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const saveKey = async () => {
+    setBusy(true);
+    setMsg(null);
+    try {
+      await apiPut("/api/news/key", { api_key: key });
+      setKey("");
+      setMsg({ ok: true, text: "GNews key verified and saved." });
+      config.reload();
+    } catch (e) {
+      setMsg({ ok: false, text: errText(e, "Couldn't save the key") });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const removeKey = async () => {
+    try {
+      await apiDelete("/api/news/key");
+      setMsg({ ok: true, text: "GNews key removed." });
+      config.reload();
+    } catch (e) {
+      setMsg({ ok: false, text: errText(e, "Couldn't remove the key") });
+    }
+  };
+
+  const c = config.data;
+  return (
+    <Section id="news" title="News" description="Live news for each stock comes from GNews (gnews.io). The key is encrypted with your password, like your broker credentials.">
+      {c?.configured && (
+        <div className="flex flex-wrap items-center gap-4 rounded-lg bg-surface-2 px-4 py-3 text-sm">
+          <div>
+            <div className="text-xs text-muted">API key</div>
+            <div className="font-mono">{c.api_key}</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted">Requests today</div>
+            <div className="font-mono">
+              {c.usage.today} / {c.usage.limit}
+            </div>
+          </div>
+          <button onClick={() => void removeKey()} className={`${secondaryBtn} ml-auto text-down`}>
+            Remove
+          </button>
+        </div>
+      )}
+      <div className="flex flex-wrap items-end gap-3">
+        <label className={`${label} min-w-64 flex-1`}>
+          {c?.configured ? "Replace API key" : "GNews API key"}
+          <input type="password" value={key} onChange={(e) => setKey(e.target.value)} autoComplete="off" className={input} />
+        </label>
+        <button onClick={() => void saveKey()} disabled={busy || key.trim().length < 8} className={primaryBtn}>
+          {busy ? "Verifying…" : "Verify & save"}
+        </button>
+      </div>
+      <p className={hint}>
+        Each stock&apos;s news is cached for 30 minutes to stay within the free plan&apos;s 100 requests a day. Verifying the key uses one request.
+      </p>
+      <Message msg={msg} />
+    </Section>
+  );
+}
+
+function ScriptRuntimeSettings() {
+  const runtime = useApi<RuntimeStatus>("/api/scripts/runtime", { intervalMs: 5000 });
+  const r = runtime.data;
+  const text = !r
+    ? "Checking…"
+    : r.state === "ready"
+      ? "Ready"
+      : r.state === "installing"
+        ? r.message || "Installing…"
+        : r.state === "error"
+          ? r.message
+          : "Not installed yet";
+  return (
+    <Section id="scripts" title="Script environment" description="Strategy scripts run in their own Python environment with pandas and pandas-ta-classic, separate from QuantVision itself.">
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${r?.state === "ready" ? "bg-up/15 text-up" : r?.state === "error" ? "bg-down/15 text-down" : "bg-surface-2 text-muted"}`}>
+          {r?.state ?? "…"}
+        </span>
+        <span className="text-muted">{text}</span>
+        {(r?.state === "error" || r?.state === "missing") && (
+          <button
+            onClick={() => void apiPost("/api/scripts/runtime/install").then(() => runtime.reload())}
+            className={`${secondaryBtn} ml-auto`}
+          >
+            {r.state === "error" ? "Retry setup" : "Set up now"}
+          </button>
+        )}
+      </div>
+      {r?.path && <p className={hint}>Location: {r.path}. Scripts are saved as .py files in Documents/QuantVision/scripts.</p>}
+    </Section>
+  );
+}
+
 export default function SetupPage() {
   const { status } = useAuth();
 
@@ -556,6 +659,8 @@ export default function SetupPage() {
       <ProfileSettings />
       <BrokerSettings />
       <PreferenceSettings />
+      <NewsSettings />
+      <ScriptRuntimeSettings />
     </div>
   );
 }

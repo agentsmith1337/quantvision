@@ -22,6 +22,26 @@ IP registered for your API app; QuantVision checks this before you trade.
 
 App data (SQLite, paper-trading state) lives in `~/Documents/QuantVision` unless `QV_HOME` is set.
 
+## Strategy scripts
+
+Write strategies in Python as an `on_candle(candle, indicators, api)` function, in the
+**Backtesting Studio** or the Trading Dashboard's *Script trade* tab. The full reference is on the
+in-app **API Docs** page (source: `backend/sdk/sdk_reference.md`).
+
+- Scripts are plain `.py` files in `Documents/QuantVision/scripts/`.
+- Each run is a separate Python process in its own environment (`Documents/QuantVision/runtime`,
+  created automatically on first launch, about a minute) with pandas and pandas-ta-classic.
+  Scripts never receive broker credentials.
+- Orders follow the global Paper/Live switch and pass the same risk limits as manual orders, plus a
+  per-run limit of 10 orders a minute. The **Kill switch** in the top bar stops every script and
+  cancels all open orders.
+
+## News
+
+The Trading Dashboard's *Live news* tab uses [GNews](https://gnews.io). Add your API key under
+Settings → News; it's encrypted like your broker credentials. Each stock's news is cached for 30
+minutes to stay within the free plan's 100 requests a day.
+
 ## Tests
 
 ```

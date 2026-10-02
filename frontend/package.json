@@ -3,18 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/copy-monaco.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copy-monaco.mjs",
     "build": "next build",
     "postbuild": "node scripts/fix-export-segments.mjs",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@tailwindcss/typography": "^0.5.20",
+    "monaco-editor": "^0.57.0",
     "next": "16.3.8",
     "next-themes": "^0.4.6",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "react-financial-charts": "^2.0.1"
+    "react-financial-charts": "^2.0.1",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -29,6 +37,7 @@
   "overrides": {
     "react": "$react",
     "react-dom": "$react-dom",
-    "d3-color": "^3.1.0"
+    "d3-color": "^3.1.0",
+    "dompurify": "^3.4.16"
   }
 }

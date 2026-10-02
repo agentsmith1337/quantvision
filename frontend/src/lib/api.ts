@@ -133,6 +133,7 @@ export type Order = {
   message: string;
   updated_at: string;
   is_open: boolean;
+  source?: string; // "manual" or the tag of the script run that placed it
 };
 
 export type Trade = { trade_id: string; order_id: string; symbol: string; side: Side; product: string; quantity: number; price: number; time: string };
@@ -164,4 +165,42 @@ export type Prefs = {
   risk: { max_order_value: number; max_orders_per_minute: number };
   static_ips: { primary: string; secondary: string };
   features: { confirm_orders: boolean; execution_popups: boolean };
+};
+
+// --- Scripts ---------------------------------------------------------------------
+
+export type ScriptInfo = { name: string; size: number; modified: string };
+export type ScriptDefaults = { symbols: string[] | null; interval: Interval | null; has_on_candle: boolean };
+export type ScriptFile = { name: string; content: string; defaults: ScriptDefaults; syntax_error: string | null };
+export type RuntimeStatus = { state: "unknown" | "missing" | "installing" | "ready" | "error"; message: string; path: string };
+
+export type RunState = "starting" | "running" | "stopping" | "stopped" | "finished" | "failed";
+export type RunInfo = {
+  id: string;
+  script: string;
+  symbols: string[];
+  interval: Interval;
+  state: RunState;
+  message: string;
+  started_at: string;
+  ended_at: string | null;
+  candles: number;
+  orders: number;
+  errors: number;
+  tag: string;
+  active: boolean;
+};
+export type LogEntry = { seq: number; ts: number; level: "info" | "warning" | "error"; text: string };
+
+// --- News ------------------------------------------------------------------------
+
+export type NewsArticle = { title: string; description: string; url: string; image: string | null; published_at: string | null; source: string };
+export type NewsPayload = {
+  symbol: string;
+  configured: boolean;
+  query?: string;
+  fetched_at?: string;
+  cached?: boolean;
+  articles: NewsArticle[];
+  usage: { today: number; limit: number };
 };

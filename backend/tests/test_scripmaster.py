@@ -5,8 +5,7 @@ from datetime import datetime, timedelta
 
 from app.market.instruments import parse_key, registry, symbol_key
 from app.market.scripmaster import CACHE_VERSION, IST, ScripMaster, filter_rows, parse_nse_companies
-from app.security import sessions
-from tests.conftest import SCRIP_ROWS, USER
+from tests.conftest import SCRIP_ROWS, signin
 
 
 def test_filter_keeps_cash_equities_and_indices_only():
@@ -105,12 +104,7 @@ def test_stale_cache_is_used_while_fresh_copy_is_due(tmp_path, monkeypatch):
 def test_search_endpoint_uses_the_local_file(client):
     # Engine runs on the simulated feed in tests (no Angel One session), so these
     # results can only have come from the scrip master.
-    # test_app.py ends signed out with the sign-in throttle tripped and a changed password.
-    sessions._failures.clear()
-    for password in (USER["password"], "an even better passphrase"):
-        if client.post("/api/auth/signin", json={**USER, "password": password}).status_code == 200:
-            break
-    assert client.get("/api/auth/status").json()["signed_in"]
+    signin(client)
     results = client.get("/api/market/search", params={"q": "tata"}).json()
     assert {r["symbol"] for r in results} >= {"TATASTEEL", "TATAPOWER"}
     by_name = client.get("/api/market/search", params={"q": "state bank"}).json()

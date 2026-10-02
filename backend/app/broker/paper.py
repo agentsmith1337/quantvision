@@ -145,6 +145,7 @@ class PaperBroker(Broker):
                 price=req.price, trigger_price=req.trigger_price, average_price=None,
                 status="trigger pending" if req.order_type in ("SL", "SL-M") else "open",
                 message="", updated_at=_now(), variety="STOPLOSS" if req.order_type in ("SL", "SL-M") else "NORMAL",
+                source=req.tag or "manual",
             )
             self._orders[order.order_id] = order
             self._evaluate(order, ltp)
