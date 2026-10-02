@@ -81,6 +81,19 @@ def test_articles_use_or_query_and_are_cached(client, gnews):
     assert client.get("/api/news/config").json()["usage"]["today"] == before + 1
 
 
+def test_custom_query_is_searched_and_cached_separately(client, gnews):
+    signin(client)
+    client.put("/api/news/key", json={"api_key": KEY, "verify": False})
+    default = client.get("/api/news/SBIN").json()
+    custom = client.get("/api/news/SBIN", params={"q": "  SBI   quarterly results "}).json()
+    assert custom["query"] == "SBI quarterly results" and custom["default_query"] == default["query"]
+    assert gnews.calls[-1]["q"] == "SBI quarterly results" and custom["cached"] is False
+    assert client.get("/api/news/SBIN", params={"q": "SBI quarterly results"}).json()["cached"] is True
+    assert client.get("/api/news/SBIN", params={"q": ""}).json()["query"] == default["query"]  # blank = default
+    assert len(gnews.calls) == 2
+    assert client.get("/api/news/SBIN", params={"q": "x" * 501}).status_code == 422
+
+
 def test_errors_are_reported_clearly(client, gnews):
     signin(client)
     client.put("/api/news/key", json={"api_key": KEY, "verify": False})

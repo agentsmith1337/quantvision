@@ -1,0 +1,7270 @@
+[
+ {
+  "name": "cdl_2crows",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Two Crows candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "2crows"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_3blackcrows",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Three Black Crows candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "3blackcrows"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_3inside",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Three Inside Up/Down candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "3inside"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_3linestrike",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Three-Line Strike candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "3linestrike"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_3outside",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Three Outside Up/Down candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "3outside"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_3starsinsouth",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Three Stars In The South candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "3starsinsouth"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_3whitesoldiers",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Three Advancing White Soldiers candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "3whitesoldiers"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_abandonedbaby",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Abandoned Baby candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "penetration",
+    "arg": "penetration",
+    "default": 0.3
+   }
+  ],
+  "fixed": {
+   "name": "abandonedbaby"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_advanceblock",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Advance Block candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "advanceblock"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_belthold",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Belt-hold candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "belthold"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_breakaway",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Breakaway candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "breakaway"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_closingmarubozu",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Closing Marubozu candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "closingmarubozu"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_concealbabyswall",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Concealing Baby Swallow candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "concealbabyswall"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_counterattack",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Counterattack candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "counterattack"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_darkcloudcover",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Dark Cloud Cover candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "penetration",
+    "arg": "penetration",
+    "default": 0.5
+   }
+  ],
+  "fixed": {
+   "name": "darkcloudcover"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_doji",
+  "function": "cdl_doji",
+  "category": "candles",
+  "title": "Candle Type: Doji",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "factor",
+    "arg": "factor",
+    "default": 10
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "asint",
+    "arg": "asint",
+    "default": true
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "cdl_dojistar",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Doji Star candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "dojistar"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_dragonflydoji",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Dragonfly Doji candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "dragonflydoji"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_engulfing",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Engulfing Pattern candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "engulfing"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_eveningdojistar",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Evening Doji Star candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "penetration",
+    "arg": "penetration",
+    "default": 0.3
+   }
+  ],
+  "fixed": {
+   "name": "eveningdojistar"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_eveningstar",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Evening Star candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "penetration",
+    "arg": "penetration",
+    "default": 0.3
+   }
+  ],
+  "fixed": {
+   "name": "eveningstar"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_gapsidesidewhite",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Up/Down-gap side-by-side white lines candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "gapsidesidewhite"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_gravestonedoji",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Gravestone Doji candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "gravestonedoji"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_hammer",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Hammer candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "hammer"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_hangingman",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Hanging Man candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "hangingman"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_harami",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Harami Pattern candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "harami"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_haramicross",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Harami Cross Pattern candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "haramicross"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_highwave",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "High-Wave Candle candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "highwave"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_hikkake",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Hikkake Pattern candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "hikkake"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_hikkakemod",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Modified Hikkake Pattern candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "hikkakemod"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_homingpigeon",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Homing Pigeon candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "homingpigeon"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_identical3crows",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Identical Three Crows candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "identical3crows"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_inneck",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "In-Neck Pattern candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "inneck"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_inside",
+  "function": "cdl_inside",
+  "category": "candles",
+  "title": "Candle Type: Inside Bar",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "asbool",
+    "arg": "asbool",
+    "default": false
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "cdl_invertedhammer",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Inverted Hammer candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "invertedhammer"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_kicking",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Kicking candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "kicking"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_kickingbylength",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Kicking - bull/bear determined by the longer marubozu candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "kickingbylength"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_ladderbottom",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Ladder Bottom candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "ladderbottom"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_longleggeddoji",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Long Legged Doji candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "longleggeddoji"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_longline",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Long Line Candle candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "longline"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_marubozu",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Marubozu candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "marubozu"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_matchinglow",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Matching Low candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "matchinglow"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_mathold",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Mat Hold candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "penetration",
+    "arg": "penetration",
+    "default": 0.5
+   }
+  ],
+  "fixed": {
+   "name": "mathold"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_morningdojistar",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Morning Doji Star candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "penetration",
+    "arg": "penetration",
+    "default": 0.3
+   }
+  ],
+  "fixed": {
+   "name": "morningdojistar"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_morningstar",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Morning Star candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "penetration",
+    "arg": "penetration",
+    "default": 0.3
+   }
+  ],
+  "fixed": {
+   "name": "morningstar"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_onneck",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "On-Neck Pattern candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "onneck"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_piercing",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Piercing Pattern candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "piercing"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_rickshawman",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Rickshaw Man candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "rickshawman"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_risefall3methods",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Rising/Falling Three Methods candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "risefall3methods"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_separatinglines",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Separating Lines candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "separatinglines"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_shootingstar",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Shooting Star candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "shootingstar"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_shortline",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Short Line Candle candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "shortline"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_spinningtop",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Spinning Top candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "spinningtop"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_stalledpattern",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Stalled Pattern candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "stalledpattern"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_sticksandwich",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Stick Sandwich candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "sticksandwich"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_takuri",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Takuri (Dragonfly Doji with very long lower shadow) candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "takuri"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_tasukigap",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Tasuki Gap candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "tasukigap"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_thrusting",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Thrusting Pattern candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "thrusting"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_tristar",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Tristar Pattern candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "tristar"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_unique3river",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Unique 3 River candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "unique3river"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_upsidegap2crows",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Upside Gap Two Crows candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "upsidegap2crows"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_xsidegap3methods",
+  "function": "cdl_pattern",
+  "category": "candles",
+  "title": "Upside/Downside Gap Three Methods candlestick pattern",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "name": "xsidegap3methods"
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "pattern"
+  }
+ },
+ {
+  "name": "cdl_z",
+  "function": "cdl_z",
+  "category": "candles",
+  "title": "Candle Type: Z",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   },
+   {
+    "name": "full",
+    "arg": "full",
+    "default": false
+   },
+   {
+    "name": "ddof",
+    "arg": "ddof",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "open",
+    "high",
+    "low",
+    "close"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "name": "ha",
+  "function": "ha",
+  "category": "candles",
+  "title": "Heikin Ashi Candles (HA)",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "open",
+    "high",
+    "low",
+    "close"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "name": "dsp",
+  "function": "dsp",
+  "category": "cycles",
+  "title": "Detrended Synthetic Price (DSP)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ebsw",
+  "function": "ebsw",
+  "category": "cycles",
+  "title": "Even Better SineWave (EBSW) *beta*",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 40
+   },
+   {
+    "name": "bars",
+    "arg": "bars",
+    "default": 10
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ht_dcperiod",
+  "function": "ht_dcperiod",
+  "category": "cycles",
+  "title": "Hilbert Transform - Dominant Cycle Period (HT_DCPERIOD)",
+  "inputs": [
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ht_dcphase",
+  "function": "ht_dcphase",
+  "category": "cycles",
+  "title": "Hilbert Transform - Dominant Cycle Phase (HT_DCPHASE)",
+  "inputs": [
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ht_phasor",
+  "function": "ht_phasor",
+  "category": "cycles",
+  "title": "Hilbert Transform - Phasor Components (HT_PHASOR)",
+  "inputs": [
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "inphase",
+    "quadrature"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "ht_sine",
+  "function": "ht_sine",
+  "category": "cycles",
+  "title": "Hilbert Transform - SineWave (HT_SINE)",
+  "inputs": [
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "sine",
+    "lead_sine"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "ht_trendmode",
+  "function": "ht_trendmode",
+  "category": "cycles",
+  "title": "Hilbert Transform - Trend vs Cycle Mode (HT_TRENDMODE)",
+  "inputs": [
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "msw",
+  "function": "msw",
+  "category": "cycles",
+  "title": "Mesa Sine Wave (MSW)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "period",
+    "default": 5
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "sine",
+    "lead"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "ao",
+  "function": "ao",
+  "category": "momentum",
+  "title": "Awesome Oscillator (AO)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 5
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 34
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "apo",
+  "function": "apo",
+  "category": "momentum",
+  "title": "Absolute Price Oscillator (APO)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 12
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 26
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "sma"
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "bias",
+  "function": "bias",
+  "category": "momentum",
+  "title": "Bias (BIAS)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 26
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "sma"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "bop",
+  "function": "bop",
+  "category": "momentum",
+  "title": "Balance of Power (BOP)",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "brar",
+  "function": "brar",
+  "category": "momentum",
+  "title": "BRAR (BRAR)",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 26
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "ar",
+    "br"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "cci",
+  "function": "cci",
+  "category": "momentum",
+  "title": "Commodity Channel Index (CCI)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "c",
+    "arg": "c",
+    "default": 0.015
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "cfo",
+  "function": "cfo",
+  "category": "momentum",
+  "title": "Chande Forcast Oscillator (CFO)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 9
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "cg",
+  "function": "cg",
+  "category": "momentum",
+  "title": "Center of Gravity (CG)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "cmo",
+  "function": "cmo",
+  "category": "momentum",
+  "title": "Chande Momentum Oscillator (CMO)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "coppock",
+  "function": "coppock",
+  "category": "momentum",
+  "title": "Coppock Curve (COPC)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 11
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 14
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "cti",
+  "function": "cti",
+  "category": "momentum",
+  "title": "Correlation Trend Indicator (CTI)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 12
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "dm",
+  "function": "dm",
+  "category": "momentum",
+  "title": "Directional Movement (DM)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "rma"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "plus_dm",
+    "minus_dm"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "er",
+  "function": "er",
+  "category": "momentum",
+  "title": "Efficiency Ratio (ER)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "eri",
+  "function": "eri",
+  "category": "momentum",
+  "title": "Elder Ray Index (ERI)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 13
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "bull_power",
+    "bear_power"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "fisher",
+  "function": "fisher",
+  "category": "momentum",
+  "title": "Fisher Transform (FISHT)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 9
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "fisher",
+    "signal"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "fosc",
+  "function": "fosc",
+  "category": "momentum",
+  "title": "Forecast Oscillator (FOSC)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "inertia",
+  "function": "inertia",
+  "category": "momentum",
+  "title": "Inertia (INERTIA)",
+  "inputs": [
+   "close",
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   },
+   {
+    "name": "rvi_length",
+    "arg": "rvi_length",
+    "default": 14
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "refined",
+    "arg": "refined",
+    "default": false
+   },
+   {
+    "name": "thirds",
+    "arg": "thirds",
+    "default": false
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "kdj",
+  "function": "kdj",
+  "category": "momentum",
+  "title": "KDJ (KDJ)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 9
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 3
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "k",
+    "d",
+    "j"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "kst",
+  "function": "kst",
+  "category": "momentum",
+  "title": "'Know Sure Thing' (KST)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "roc1",
+    "arg": "roc1",
+    "default": 10
+   },
+   {
+    "name": "roc2",
+    "arg": "roc2",
+    "default": 15
+   },
+   {
+    "name": "roc3",
+    "arg": "roc3",
+    "default": 20
+   },
+   {
+    "name": "roc4",
+    "arg": "roc4",
+    "default": 30
+   },
+   {
+    "name": "sma1",
+    "arg": "sma1",
+    "default": 10
+   },
+   {
+    "name": "sma2",
+    "arg": "sma2",
+    "default": 10
+   },
+   {
+    "name": "sma3",
+    "arg": "sma3",
+    "default": 10
+   },
+   {
+    "name": "sma4",
+    "arg": "sma4",
+    "default": 15
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 9
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "kst",
+    "signal"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "lrsi",
+  "function": "lrsi",
+  "category": "momentum",
+  "title": "Laguerre RSI (LRSI)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "gamma",
+    "arg": "gamma",
+    "default": 0.5
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "macd",
+  "function": "macd",
+  "category": "momentum",
+  "title": "Moving Average Convergence Divergence (MACD)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 12
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 26
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 9
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "macd",
+    "signal",
+    "histogram"
+   ],
+   "columns": [
+    0,
+    2,
+    1
+   ]
+  }
+ },
+ {
+  "name": "macdext",
+  "function": "macdext",
+  "category": "momentum",
+  "title": "MACD Extended (MACDEXT)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 12
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 26
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 9
+   },
+   {
+    "name": "fastmatype",
+    "arg": "fastmatype",
+    "default": 1
+   },
+   {
+    "name": "slowmatype",
+    "arg": "slowmatype",
+    "default": 1
+   },
+   {
+    "name": "signalmatype",
+    "arg": "signalmatype",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "macd",
+    "signal",
+    "histogram"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "macdfix",
+  "function": "macdfix",
+  "category": "momentum",
+  "title": "MACD with Fixed Periods (MACDFIX)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 9
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "macd",
+    "histogram",
+    "signal"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "mom",
+  "function": "mom",
+  "category": "momentum",
+  "title": "Momentum (MOM)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "pgo",
+  "function": "pgo",
+  "category": "momentum",
+  "title": "Pretty Good Oscillator (PGO)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "po",
+  "function": "po",
+  "category": "momentum",
+  "title": "Projection Oscillator (PO)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ppo",
+  "function": "ppo",
+  "category": "momentum",
+  "title": "Percentage Price Oscillator (PPO)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 12
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 26
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 9
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "sma"
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "ppo",
+    "histogram",
+    "signal"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "psl",
+  "function": "psl",
+  "category": "momentum",
+  "title": "Psychological Line (PSL)",
+  "inputs": [
+   "close",
+   "open"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 12
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "pvo",
+  "function": "pvo",
+  "category": "momentum",
+  "title": "Percentage Volume Oscillator (PVO)",
+  "inputs": [
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 12
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 26
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 9
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "pvo",
+    "histogram",
+    "signal"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "qqe",
+  "function": "qqe",
+  "category": "momentum",
+  "title": "Quantitative Qualitative Estimation (QQE)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "smooth",
+    "arg": "smooth",
+    "default": 5
+   },
+   {
+    "name": "factor",
+    "arg": "factor",
+    "default": 4.236
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "qqe",
+    "rsi_ma",
+    "long",
+    "short",
+    "long_band",
+    "short_band",
+    "direction"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  }
+ },
+ {
+  "name": "roc",
+  "function": "roc",
+  "category": "momentum",
+  "title": "Rate of Change (ROC)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "rocp",
+  "function": "rocp",
+  "category": "momentum",
+  "title": "Rate of Change Percentage (ROCP)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "rocr",
+  "function": "rocr",
+  "category": "momentum",
+  "title": "Rate of Change Ratio (ROCR)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "rocr100",
+  "function": "rocr100",
+  "category": "momentum",
+  "title": "Rate of Change Ratio * 100 (ROCR100)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "rsi",
+  "function": "rsi",
+  "category": "momentum",
+  "title": "Relative Strength Index (RSI)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "rsx",
+  "function": "rsx",
+  "category": "momentum",
+  "title": "Relative Strength Xtra (rsx)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "rvgi",
+  "function": "rvgi",
+  "category": "momentum",
+  "title": "Relative Vigor Index (RVGI)",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "swma_length",
+    "arg": "swma_length",
+    "default": 4
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "histogram",
+    "rvgi",
+    "signal"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "slope",
+  "function": "slope",
+  "category": "momentum",
+  "title": "Slope",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 1
+   },
+   {
+    "name": "as_angle",
+    "arg": "as_angle",
+    "default": false
+   },
+   {
+    "name": "to_degrees",
+    "arg": "to_degrees",
+    "default": false
+   },
+   {
+    "name": "vertical",
+    "arg": "vertical",
+    "default": false
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "smc_sweep",
+  "function": "smc_sweep",
+  "category": "momentum",
+  "title": "Smart Money Concept Liquidity Sweep (SMC_SWEEP)",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 15
+   },
+   {
+    "name": "wick_mult",
+    "arg": "wick_mult",
+    "default": 1.5
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "smi",
+  "function": "smi",
+  "category": "momentum",
+  "title": "SMI Ergodic Indicator (SMI)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 5
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 20
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 5
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "smi",
+    "signal",
+    "oscillator"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "squeeze",
+  "function": "squeeze",
+  "category": "momentum",
+  "title": "Squeeze (SQZ)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "bb_length",
+    "arg": "bb_length",
+    "default": 20
+   },
+   {
+    "name": "bb_std",
+    "arg": "bb_std",
+    "default": 2.0
+   },
+   {
+    "name": "kc_length",
+    "arg": "kc_length",
+    "default": 20
+   },
+   {
+    "name": "kc_scalar",
+    "arg": "kc_scalar",
+    "default": 1.5
+   },
+   {
+    "name": "mom_length",
+    "arg": "mom_length",
+    "default": 12
+   },
+   {
+    "name": "mom_smooth",
+    "arg": "mom_smooth",
+    "default": 6
+   },
+   {
+    "name": "use_tr",
+    "arg": "tr",
+    "default": true
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "sma"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "sqz",
+    "on",
+    "off",
+    "no_squeeze"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "name": "squeeze_pro",
+  "function": "squeeze_pro",
+  "category": "momentum",
+  "title": "Squeeze PRO(SQZPRO)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "bb_length",
+    "arg": "bb_length",
+    "default": 20
+   },
+   {
+    "name": "bb_std",
+    "arg": "bb_std",
+    "default": 2.0
+   },
+   {
+    "name": "kc_length",
+    "arg": "kc_length",
+    "default": 20
+   },
+   {
+    "name": "kc_scalar_wide",
+    "arg": "kc_scalar_wide",
+    "default": 2
+   },
+   {
+    "name": "kc_scalar_normal",
+    "arg": "kc_scalar_normal",
+    "default": 1.5
+   },
+   {
+    "name": "kc_scalar_narrow",
+    "arg": "kc_scalar_narrow",
+    "default": 1
+   },
+   {
+    "name": "mom_length",
+    "arg": "mom_length",
+    "default": 12
+   },
+   {
+    "name": "mom_smooth",
+    "arg": "mom_smooth",
+    "default": 6
+   },
+   {
+    "name": "use_tr",
+    "arg": "tr",
+    "default": true
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "sma"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "sqz",
+    "on_wide",
+    "on_normal",
+    "on_narrow",
+    "off",
+    "no_squeeze"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  }
+ },
+ {
+  "name": "stc",
+  "function": "stc",
+  "category": "momentum",
+  "title": "Schaff Trend Cycle (STC)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "tclength",
+    "arg": "tclength",
+    "default": 10
+   },
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 12
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 26
+   },
+   {
+    "name": "factor",
+    "arg": "factor",
+    "default": 0.5
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "stc",
+    "macd",
+    "stoch"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "stoch",
+  "function": "stoch",
+  "category": "momentum",
+  "title": "Stochastic (STOCH)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "k",
+    "arg": "k",
+    "default": 14
+   },
+   {
+    "name": "d",
+    "arg": "d",
+    "default": 3
+   },
+   {
+    "name": "smooth_k",
+    "arg": "smooth_k",
+    "default": 3
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "sma"
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "k",
+    "d"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "stochf",
+  "function": "stochf",
+  "category": "momentum",
+  "title": "Stochastic Fast (STOCHF)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "fastk",
+    "arg": "fastk",
+    "default": 5
+   },
+   {
+    "name": "fastd",
+    "arg": "fastd",
+    "default": 3
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "sma"
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "k",
+    "d"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "stochrsi",
+  "function": "stochrsi",
+  "category": "momentum",
+  "title": "Stochastic (STOCHRSI)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "rsi_length",
+    "arg": "rsi_length",
+    "default": 14
+   },
+   {
+    "name": "k",
+    "arg": "k",
+    "default": 3
+   },
+   {
+    "name": "d",
+    "arg": "d",
+    "default": 3
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "sma"
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "k",
+    "d"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "td_seq",
+  "function": "td_seq",
+  "category": "momentum",
+  "title": "TD Sequential (TD_SEQ)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "asint",
+    "arg": "asint",
+    "default": false
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "up",
+    "down"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "trix",
+  "function": "trix",
+  "category": "momentum",
+  "title": "Trix (TRIX)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 9
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "trix",
+    "signal"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "trixh",
+  "function": "trixh",
+  "category": "momentum",
+  "title": "TRIX Histogram (TRIXH)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 18
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 9
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "trix",
+    "signal",
+    "histogram"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "tsi",
+  "function": "tsi",
+  "category": "momentum",
+  "title": "True Strength Index (TSI)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 13
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 25
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 13
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "tsi",
+    "signal"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "uo",
+  "function": "uo",
+  "category": "momentum",
+  "title": "Ultimate Oscillator (UO)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 7
+   },
+   {
+    "name": "medium",
+    "arg": "medium",
+    "default": 14
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 28
+   },
+   {
+    "name": "fast_w",
+    "arg": "fast_w",
+    "default": 4.0
+   },
+   {
+    "name": "medium_w",
+    "arg": "medium_w",
+    "default": 2.0
+   },
+   {
+    "name": "slow_w",
+    "arg": "slow_w",
+    "default": 1.0
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "vwmacd",
+  "function": "vwmacd",
+  "category": "momentum",
+  "title": "Volume Weighted MACD (VWMACD)",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 12
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 26
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 9
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "macd",
+    "histogram",
+    "signal"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "willr",
+  "function": "willr",
+  "category": "momentum",
+  "title": "William's Percent R (WILLR)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "alma",
+  "function": "alma",
+  "category": "overlap",
+  "title": "Arnaud Legoux Moving Average (ALMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "sigma",
+    "arg": "sigma",
+    "default": 6.0
+   },
+   {
+    "name": "distribution_offset",
+    "arg": "distribution_offset",
+    "default": 0.85
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "avgprice",
+  "function": "avgprice",
+  "category": "overlap",
+  "title": "Average Price (AVGPRICE)",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "dema",
+  "function": "dema",
+  "category": "overlap",
+  "title": "Double Exponential Moving Average (DEMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ema",
+  "function": "ema",
+  "category": "overlap",
+  "title": "Exponential Moving Average (EMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {
+   "length": 20
+  },
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "fwma",
+  "function": "fwma",
+  "category": "overlap",
+  "title": "Fibonacci's Weighted Moving Average (FWMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "asc",
+    "arg": "asc",
+    "default": true
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "hilo",
+  "function": "hilo",
+  "category": "overlap",
+  "title": "Gann HiLo Activator(HiLo)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "high_length",
+    "arg": "high_length",
+    "default": 13
+   },
+   {
+    "name": "low_length",
+    "arg": "low_length",
+    "default": 21
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "sma"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "hilo",
+    "long",
+    "short"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "hl2",
+  "function": "hl2",
+  "category": "overlap",
+  "title": "HL2 (Median Price)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "hlc3",
+  "function": "hlc3",
+  "category": "overlap",
+  "title": "HLC3 (Typical Price)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "hma",
+  "function": "hma",
+  "category": "overlap",
+  "title": "Hull Moving Average (HMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ht_trendline",
+  "function": "ht_trendline",
+  "category": "overlap",
+  "title": "Hilbert Transform - Instantaneous Trendline (HT_TRENDLINE)",
+  "inputs": [
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "hwma",
+  "function": "hwma",
+  "category": "overlap",
+  "title": "HWMA (Holt-Winter Moving Average)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "na",
+    "arg": "na",
+    "default": 0.2
+   },
+   {
+    "name": "nb",
+    "arg": "nb",
+    "default": 0.1
+   },
+   {
+    "name": "nc",
+    "arg": "nc",
+    "default": 0.1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ichimoku",
+  "function": "ichimoku",
+  "category": "overlap",
+  "title": "Ichimoku Kinkō Hyō (ichimoku)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "tenkan",
+    "arg": "tenkan",
+    "default": 9
+   },
+   {
+    "name": "kijun",
+    "arg": "kijun",
+    "default": 26
+   },
+   {
+    "name": "senkou",
+    "arg": "senkou",
+    "default": 52
+   },
+   {
+    "name": "include_chikou",
+    "arg": "include_chikou",
+    "default": true
+   }
+  ],
+  "fixed": {
+   "as_dataframe": true
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "span_a",
+    "span_b",
+    "tenkan",
+    "kijun",
+    "chikou"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  "notes": "chikou is the close shifted 26 candles back, so its latest value is always None in live trading; the forward cloud isn't returned."
+ },
+ {
+  "name": "jma",
+  "function": "jma",
+  "category": "overlap",
+  "title": "Jurik Moving Average Average (JMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 7
+   },
+   {
+    "name": "phase",
+    "arg": "phase",
+    "default": 0
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "kama",
+  "function": "kama",
+  "category": "overlap",
+  "title": "Kaufman's Adaptive Moving Average (KAMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 2
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 30
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "linreg",
+  "function": "linreg",
+  "category": "overlap",
+  "title": "Linear Regression Moving Average (linreg)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "linregangle",
+  "function": "linregangle",
+  "category": "overlap",
+  "title": "Linear Regression Angle (LINEARREG_ANGLE)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "linregintercept",
+  "function": "linregintercept",
+  "category": "overlap",
+  "title": "Linear Regression Intercept (LINEARREG_INTERCEPT)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "linregslope",
+  "function": "linregslope",
+  "category": "overlap",
+  "title": "Linear Regression Slope (LINEARREG_SLOPE)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "mama",
+  "function": "mama",
+  "category": "overlap",
+  "title": "MESA Adaptive Moving Average (MAMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "fastlimit",
+    "arg": "fastlimit",
+    "default": 0.5
+   },
+   {
+    "name": "slowlimit",
+    "arg": "slowlimit",
+    "default": 0.05
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "mama",
+    "fama"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "mcgd",
+  "function": "mcgd",
+  "category": "overlap",
+  "title": "McGinley Dynamic Indicator",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "c",
+    "arg": "c",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "medprice",
+  "function": "medprice",
+  "category": "overlap",
+  "title": "Median Price (MEDPRICE)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "midpoint",
+  "function": "midpoint",
+  "category": "overlap",
+  "title": "Midpoint Over Period (MIDPOINT)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 2
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "midprice",
+  "function": "midprice",
+  "category": "overlap",
+  "title": "Midpoint Price Over Period (MIDPRICE)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 2
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "mmar",
+  "function": "mmar",
+  "category": "overlap",
+  "title": "Madrid Moving Average Ribbon (MMAR)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "ma1",
+    "ma2",
+    "ma3",
+    "ma4",
+    "ma5",
+    "ma6"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  }
+ },
+ {
+  "name": "ohlc4",
+  "function": "ohlc4",
+  "category": "overlap",
+  "title": "OHLC4 (Average of Open, High, Low, Close)",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "pwma",
+  "function": "pwma",
+  "category": "overlap",
+  "title": "Pascal's Weighted Moving Average (PWMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "asc",
+    "arg": "asc",
+    "default": true
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "rainbow",
+  "function": "rainbow",
+  "category": "overlap",
+  "title": "Rainbow Charts",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 2
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "ma1",
+    "ma2",
+    "ma3",
+    "ma4",
+    "ma5",
+    "ma6",
+    "ma7",
+    "ma8",
+    "ma9",
+    "ma10"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  }
+ },
+ {
+  "name": "rma",
+  "function": "rma",
+  "category": "overlap",
+  "title": "Wilder's Moving Average (RMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "sinwma",
+  "function": "sinwma",
+  "category": "overlap",
+  "title": "Sine Weighted Moving Average (SWMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "sma",
+  "function": "sma",
+  "category": "overlap",
+  "title": "Simple Moving Average (SMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {
+   "length": 20
+  },
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ssf",
+  "function": "ssf",
+  "category": "overlap",
+  "title": "Ehler's Super Smoother Filter (SSF) © 2013",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "poles",
+    "arg": "poles",
+    "default": 2
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "supertrend",
+  "function": "supertrend",
+  "category": "overlap",
+  "title": "Supertrend (supertrend)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 7
+   },
+   {
+    "name": "multiplier",
+    "arg": "multiplier",
+    "default": 3.0
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "value",
+    "direction",
+    "long",
+    "short"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "name": "swma",
+  "function": "swma",
+  "category": "overlap",
+  "title": "Symmetric Weighted Moving Average (SWMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "asc",
+    "arg": "asc",
+    "default": true
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "t3",
+  "function": "t3",
+  "category": "overlap",
+  "title": "Tim Tillson's T3 Moving Average (T3)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "a",
+    "arg": "a",
+    "default": 0.7
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "tema",
+  "function": "tema",
+  "category": "overlap",
+  "title": "Triple Exponential Moving Average (TEMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "trima",
+  "function": "trima",
+  "category": "overlap",
+  "title": "Triangular Moving Average (TRIMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "tsf",
+  "function": "tsf",
+  "category": "overlap",
+  "title": "Time Series Forecast (TSF)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "typprice",
+  "function": "typprice",
+  "category": "overlap",
+  "title": "Typical Price (TYPPRICE)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "vidya",
+  "function": "vidya",
+  "category": "overlap",
+  "title": "Variable Index Dynamic Average (VIDYA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "vwap",
+  "function": "vwap",
+  "category": "overlap",
+  "title": "Volume Weighted Average Price (VWAP)",
+  "inputs": [
+   "high",
+   "low",
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "anchor",
+    "arg": "anchor",
+    "default": "D"
+   }
+  ],
+  "fixed": {},
+  "overrides": {
+   "anchor": "D"
+  },
+  "returns": {
+   "kind": "value"
+  },
+  "notes": "Resets each trading day (anchor='D')."
+ },
+ {
+  "name": "vwma",
+  "function": "vwma",
+  "category": "overlap",
+  "title": "Volume Weighted Moving Average (VWMA)",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "wcp",
+  "function": "wcp",
+  "category": "overlap",
+  "title": "Weighted Closing Price (WCP)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "wma",
+  "function": "wma",
+  "category": "overlap",
+  "title": "Weighted Moving Average (WMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   },
+   {
+    "name": "asc",
+    "arg": "asc",
+    "default": true
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {
+   "length": 20
+  },
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "zlma",
+  "function": "zlma",
+  "category": "overlap",
+  "title": "Zero Lag Moving Average (ZLMA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "drawdown",
+  "function": "drawdown",
+  "category": "performance",
+  "title": "Drawdown (DD)",
+  "inputs": [
+   "close"
+  ],
+  "params": [],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "drawdown",
+    "percent",
+    "log"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "log_return",
+  "function": "log_return",
+  "category": "performance",
+  "title": "Log Return",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 1
+   },
+   {
+    "name": "cumulative",
+    "arg": "cumulative",
+    "default": false
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "percent_return",
+  "function": "percent_return",
+  "category": "performance",
+  "title": "Percent Return",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 1
+   },
+   {
+    "name": "cumulative",
+    "arg": "cumulative",
+    "default": false
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "beta",
+  "function": "beta",
+  "category": "statistics",
+  "title": "Beta (BETA)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "other",
+    "arg": "benchmark",
+    "default": null
+   },
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  },
+  "pair": true
+ },
+ {
+  "name": "correl",
+  "function": "correl",
+  "category": "statistics",
+  "title": "Pearson Correlation Coefficient (CORREL)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "other",
+    "arg": "benchmark",
+    "default": null
+   },
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  },
+  "pair": true
+ },
+ {
+  "name": "entropy",
+  "function": "entropy",
+  "category": "statistics",
+  "title": "Entropy (ENTP)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "base",
+    "arg": "base",
+    "default": 2.0
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "kurtosis",
+  "function": "kurtosis",
+  "category": "statistics",
+  "title": "Rolling Kurtosis",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "mad",
+  "function": "mad",
+  "category": "statistics",
+  "title": "Rolling Mean Absolute Deviation",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "md",
+  "function": "md",
+  "category": "statistics",
+  "title": "Mean Deviation (MD)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "median",
+  "function": "median",
+  "category": "statistics",
+  "title": "Rolling Median",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "quantile",
+  "function": "quantile",
+  "category": "statistics",
+  "title": "Rolling Quantile",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   },
+   {
+    "name": "q",
+    "arg": "q",
+    "default": 0.5
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "skew",
+  "function": "skew",
+  "category": "statistics",
+  "title": "Rolling Skew",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "stderr",
+  "function": "stderr",
+  "category": "statistics",
+  "title": "Standard Error (STDERR)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "ddof",
+    "arg": "ddof",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "stdev",
+  "function": "stdev",
+  "category": "statistics",
+  "title": "Rolling Standard Deviation",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   },
+   {
+    "name": "ddof",
+    "arg": "ddof",
+    "default": 0
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "tos_stdevall",
+  "function": "tos_stdevall",
+  "category": "statistics",
+  "title": "TD Ameritrade's Think or Swim Standard Deviation All (TOS_STDEV)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   },
+   {
+    "name": "stds",
+    "arg": "stds",
+    "default": [
+     1,
+     2,
+     3
+    ]
+   },
+   {
+    "name": "ddof",
+    "arg": "ddof",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "lr",
+    "lower_1",
+    "upper_1",
+    "lower_2",
+    "upper_2",
+    "lower_3",
+    "upper_3"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  "notes": "Regression over all available history."
+ },
+ {
+  "name": "variance",
+  "function": "variance",
+  "category": "statistics",
+  "title": "Rolling Variance",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   },
+   {
+    "name": "ddof",
+    "arg": "ddof",
+    "default": 0
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "zscore",
+  "function": "zscore",
+  "category": "statistics",
+  "title": "Rolling Z Score",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 30
+   },
+   {
+    "name": "std",
+    "arg": "std",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "adx",
+  "function": "adx",
+  "category": "trend",
+  "title": "Average Directional Movement (ADX)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "lensig",
+    "arg": "lensig",
+    "default": null,
+    "same_as": "period"
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "rma"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "adx",
+    "plus_di",
+    "minus_di"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "adxr",
+  "function": "adxr",
+  "category": "trend",
+  "title": "Average Directional Movement Index Rating (ADXR)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "lensig",
+    "arg": "lensig",
+    "default": null,
+    "same_as": "period"
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "rma"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "adxr",
+    "plus_di",
+    "minus_di"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "amat",
+  "function": "amat",
+  "category": "trend",
+  "title": "Archer Moving Averages Trends (AMAT)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 8
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 21
+   },
+   {
+    "name": "lookback",
+    "arg": "lookback",
+    "default": 2
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "long_run",
+    "short_run"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "aroon",
+  "function": "aroon",
+  "category": "trend",
+  "title": "Aroon & Aroon Oscillator (AROON)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "down",
+    "up",
+    "oscillator"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "chop",
+  "function": "chop",
+  "category": "trend",
+  "title": "Choppiness Index (CHOP)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "atr_length",
+    "arg": "atr_length",
+    "default": 1
+   },
+   {
+    "name": "ln",
+    "arg": "ln",
+    "default": false
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "cksp",
+  "function": "cksp",
+  "category": "trend",
+  "title": "Chande Kroll Stop (CKSP)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "p",
+    "arg": "p",
+    "default": 10
+   },
+   {
+    "name": "x",
+    "arg": "x",
+    "default": 3
+   },
+   {
+    "name": "q",
+    "arg": "q",
+    "default": 20
+   },
+   {
+    "name": "tvmode",
+    "arg": "tvmode",
+    "default": true
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "long_stop",
+    "short_stop"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "cpr",
+  "function": "cpr",
+  "category": "trend",
+  "title": "CPR (Central Pivot Range)",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "method",
+    "arg": "method",
+    "default": "classic"
+   },
+   {
+    "name": "timeframe",
+    "arg": "timeframe",
+    "default": "daily"
+   },
+   {
+    "name": "interval",
+    "arg": "interval",
+    "default": null
+   },
+   {
+    "name": "levels",
+    "arg": "levels",
+    "default": "standard"
+   },
+   {
+    "name": "width_analysis",
+    "arg": "width_analysis",
+    "default": true
+   },
+   {
+    "name": "price_position",
+    "arg": "price_position",
+    "default": true
+   },
+   {
+    "name": "virgin_cpr",
+    "arg": "virgin_cpr",
+    "default": false
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "tc",
+    "pivot",
+    "bc",
+    "r1",
+    "r2",
+    "s1",
+    "s2",
+    "width",
+    "width_pct",
+    "width_class",
+    "position"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+   ]
+  },
+  "notes": "width_class and position are text labels."
+ },
+ {
+  "name": "decay",
+  "function": "decay",
+  "category": "trend",
+  "title": "Decay",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "kind",
+    "arg": "kind",
+    "default": null
+   },
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 5
+   },
+   {
+    "name": "mode",
+    "arg": "mode",
+    "default": "linear"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "decreasing",
+  "function": "decreasing",
+  "category": "trend",
+  "title": "Decreasing",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 1
+   },
+   {
+    "name": "strict",
+    "arg": "strict",
+    "default": false
+   },
+   {
+    "name": "asint",
+    "arg": "asint",
+    "default": true
+   },
+   {
+    "name": "percent",
+    "arg": "percent",
+    "default": false
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "dpo",
+  "function": "dpo",
+  "category": "trend",
+  "title": "Detrend Price Oscillator (DPO)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   }
+  ],
+  "fixed": {
+   "centered": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  },
+  "notes": "Computed non-centred (no look-ahead)."
+ },
+ {
+  "name": "dx",
+  "function": "dx",
+  "category": "trend",
+  "title": "Directional Index (DX)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "rma"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "edecay",
+  "function": "edecay",
+  "category": "trend",
+  "title": "Exponential Decay (EDECAY)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 5
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "increasing",
+  "function": "increasing",
+  "category": "trend",
+  "title": "Increasing",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 1
+   },
+   {
+    "name": "strict",
+    "arg": "strict",
+    "default": false
+   },
+   {
+    "name": "asint",
+    "arg": "asint",
+    "default": true
+   },
+   {
+    "name": "percent",
+    "arg": "percent",
+    "default": false
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "minus_dm",
+  "function": "minus_dm",
+  "category": "trend",
+  "title": "Minus Directional Movement (-DM, MINUS_DM)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "plus_dm",
+  "function": "plus_dm",
+  "category": "trend",
+  "title": "Plus Directional Movement (+DM, PLUS_DM)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "pmax",
+  "function": "pmax",
+  "category": "trend",
+  "title": "PMAX (Price Max)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   },
+   {
+    "name": "multiplier",
+    "arg": "multiplier",
+    "default": 3.0
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "psar",
+  "function": "psar",
+  "category": "trend",
+  "title": "Parabolic Stop and Reverse (psar)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "af0",
+    "arg": "af0",
+    "default": null,
+    "same_as": "af"
+   },
+   {
+    "name": "af",
+    "arg": "af",
+    "default": 0.02
+   },
+   {
+    "name": "max_af",
+    "arg": "max_af",
+    "default": 0.2
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "long",
+    "short",
+    "af",
+    "reversal"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "name": "qstick",
+  "function": "qstick",
+  "category": "trend",
+  "title": "Q Stick",
+  "inputs": [
+   "open",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "sarext",
+  "function": "sarext",
+  "category": "trend",
+  "title": "Parabolic SAR Extended (SAREXT)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "startvalue",
+    "arg": "startvalue",
+    "default": 0.0
+   },
+   {
+    "name": "offsetonreverse",
+    "arg": "offsetonreverse",
+    "default": 0.0
+   },
+   {
+    "name": "accelerationinitlong",
+    "arg": "accelerationinitlong",
+    "default": 0.02
+   },
+   {
+    "name": "accelerationlong",
+    "arg": "accelerationlong",
+    "default": 0.02
+   },
+   {
+    "name": "accelerationmaxlong",
+    "arg": "accelerationmaxlong",
+    "default": 0.2
+   },
+   {
+    "name": "accelerationinitshort",
+    "arg": "accelerationinitshort",
+    "default": 0.02
+   },
+   {
+    "name": "accelerationshort",
+    "arg": "accelerationshort",
+    "default": 0.02
+   },
+   {
+    "name": "accelerationmaxshort",
+    "arg": "accelerationmaxshort",
+    "default": 0.2
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ttm_trend",
+  "function": "ttm_trend",
+  "category": "trend",
+  "title": "TTM Trend (TTM_TRND)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 6
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "vhf",
+  "function": "vhf",
+  "category": "trend",
+  "title": "Vertical Horizontal Filter (VHF)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 28
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "vortex",
+  "function": "vortex",
+  "category": "trend",
+  "title": "Vortex",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "plus",
+    "minus"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "aberration",
+  "function": "aberration",
+  "category": "volatility",
+  "title": "Aberration",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 5
+   },
+   {
+    "name": "atr_length",
+    "arg": "atr_length",
+    "default": 15
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "middle",
+    "upper",
+    "lower",
+    "atr"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "name": "accbands",
+  "function": "accbands",
+  "category": "volatility",
+  "title": "Acceleration Bands (ACCBANDS)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   },
+   {
+    "name": "c",
+    "arg": "c",
+    "default": 4
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "sma"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "lower",
+    "middle",
+    "upper"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "atr",
+  "function": "atr",
+  "category": "volatility",
+  "title": "Average True Range (ATR)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "rma"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "avolume",
+  "function": "avolume",
+  "category": "volatility",
+  "title": "Annualised Historical Volatility (VOLATILITY)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "bbands",
+  "function": "bbands",
+  "category": "volatility",
+  "title": "Bollinger Bands (BBANDS)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   },
+   {
+    "name": "std",
+    "arg": "std",
+    "default": 2.0
+   },
+   {
+    "name": "ddof",
+    "arg": "ddof",
+    "default": 0
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "sma"
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {
+   "length": 20
+  },
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "upper",
+    "middle",
+    "lower",
+    "bandwidth",
+    "percent"
+   ],
+   "columns": [
+    2,
+    1,
+    0,
+    3,
+    4
+   ]
+  }
+ },
+ {
+  "name": "ce",
+  "function": "ce",
+  "category": "volatility",
+  "title": "Chandelier Exit (CE)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 22
+   },
+   {
+    "name": "multiplier",
+    "arg": "multiplier",
+    "default": 3.0
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "rma"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "long_stop",
+    "short_stop"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "cvi",
+  "function": "cvi",
+  "category": "volatility",
+  "title": "Chaikins Volatility (CVI)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 10
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "donchian",
+  "function": "donchian",
+  "category": "volatility",
+  "title": "Donchian Channels (DC)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "lower_length",
+    "arg": "lower_length",
+    "default": 20
+   },
+   {
+    "name": "upper_length",
+    "arg": "upper_length",
+    "default": 20
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "lower",
+    "middle",
+    "upper"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "hvol",
+  "function": "hvol",
+  "category": "volatility",
+  "title": "Historical Volatility (HVOL)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   },
+   {
+    "name": "annualization",
+    "arg": "annualization",
+    "default": 252
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "hwc",
+  "function": "hwc",
+  "category": "volatility",
+  "title": "HWC (Holt-Winter Channel)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "na",
+    "arg": "na",
+    "default": 0.2
+   },
+   {
+    "name": "nb",
+    "arg": "nb",
+    "default": 0.1
+   },
+   {
+    "name": "nc",
+    "arg": "nc",
+    "default": 0.1
+   },
+   {
+    "name": "nd",
+    "arg": "nd",
+    "default": 0.1
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 1
+   },
+   {
+    "name": "channel_eval",
+    "arg": "channel_eval",
+    "default": false
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "middle",
+    "upper",
+    "lower"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "kc",
+  "function": "kc",
+  "category": "volatility",
+  "title": "Keltner Channels (KC)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 2
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "lower",
+    "basis",
+    "upper"
+   ],
+   "columns": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "name": "massi",
+  "function": "massi",
+  "category": "volatility",
+  "title": "Mass Index (MASSI)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 9
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 25
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "natr",
+  "function": "natr",
+  "category": "volatility",
+  "title": "Normalized Average True Range (NATR)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "rma"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "pdist",
+  "function": "pdist",
+  "category": "volatility",
+  "title": "Price Distance (PDIST)",
+  "inputs": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "rvi",
+  "function": "rvi",
+  "category": "volatility",
+  "title": "Relative Volatility Index (RVI)",
+  "inputs": [
+   "close",
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   },
+   {
+    "name": "refined",
+    "arg": "refined",
+    "default": false
+   },
+   {
+    "name": "thirds",
+    "arg": "thirds",
+    "default": false
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "thermo",
+  "function": "thermo",
+  "category": "volatility",
+  "title": "Elders Thermometer (THERMO)",
+  "inputs": [
+   "high",
+   "low"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   },
+   {
+    "name": "long",
+    "arg": "long",
+    "default": 2
+   },
+   {
+    "name": "short",
+    "arg": "short",
+    "default": 0.5
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "thermo",
+    "ma",
+    "long",
+    "short"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "name": "true_range",
+  "function": "true_range",
+  "category": "volatility",
+  "title": "True Range",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ui",
+  "function": "ui",
+  "category": "volatility",
+  "title": "Ulcer Index (UI)",
+  "inputs": [
+   "close"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "scalar",
+    "arg": "scalar",
+    "default": 100
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "ad",
+  "function": "ad",
+  "category": "volume",
+  "title": "Accumulation/Distribution (AD)",
+  "inputs": [
+   "high",
+   "low",
+   "close",
+   "volume",
+   "open"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "adosc",
+  "function": "adosc",
+  "category": "volume",
+  "title": "Accumulation/Distribution Oscillator or Chaikin Oscillator",
+  "inputs": [
+   "high",
+   "low",
+   "close",
+   "volume",
+   "open"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 3
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 10
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "aobv",
+  "function": "aobv",
+  "category": "volume",
+  "title": "Archer On Balance Volume (AOBV)",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 4
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 12
+   },
+   {
+    "name": "max_lookback",
+    "arg": "max_lookback",
+    "default": 2
+   },
+   {
+    "name": "min_lookback",
+    "arg": "min_lookback",
+    "default": 2
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "obv",
+    "obv_min",
+    "obv_max",
+    "obv_fast",
+    "obv_slow",
+    "long_run",
+    "short_run"
+   ],
+   "columns": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  }
+ },
+ {
+  "name": "cmf",
+  "function": "cmf",
+  "category": "volume",
+  "title": "Chaikin Money Flow (CMF)",
+  "inputs": [
+   "high",
+   "low",
+   "close",
+   "volume",
+   "open"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 20
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "efi",
+  "function": "efi",
+  "category": "volume",
+  "title": "Elder's Force Index (EFI)",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 13
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "emv",
+  "function": "emv",
+  "category": "volume",
+  "title": "Ease of Movement (EMV)",
+  "inputs": [
+   "high",
+   "low",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "eom",
+  "function": "eom",
+  "category": "volume",
+  "title": "Ease of Movement (EOM)",
+  "inputs": [
+   "high",
+   "low",
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "divisor",
+    "arg": "divisor",
+    "default": 100000000
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "kvo",
+  "function": "kvo",
+  "category": "volume",
+  "title": "Klinger Volume Oscillator (KVO)",
+  "inputs": [
+   "high",
+   "low",
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 34
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 55
+   },
+   {
+    "name": "signal",
+    "arg": "signal",
+    "default": 13
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "fields",
+   "fields": [
+    "kvo",
+    "signal"
+   ],
+   "columns": [
+    0,
+    1
+   ]
+  }
+ },
+ {
+  "name": "marketfi",
+  "function": "marketfi",
+  "category": "volume",
+  "title": "Market Facilitation Index (MARKETFI)",
+  "inputs": [
+   "high",
+   "low",
+   "volume"
+  ],
+  "params": [],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "mfi",
+  "function": "mfi",
+  "category": "volume",
+  "title": "Money Flow Index (MFI)",
+  "inputs": [
+   "high",
+   "low",
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 14
+   },
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "nvi",
+  "function": "nvi",
+  "category": "volume",
+  "title": "Negative Volume Index (NVI)",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 1
+   },
+   {
+    "name": "initial",
+    "arg": "initial",
+    "default": 1000
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "obv",
+  "function": "obv",
+  "category": "volume",
+  "title": "On Balance Volume (OBV)",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [],
+  "fixed": {
+   "talib": false
+  },
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "pvi",
+  "function": "pvi",
+  "category": "volume",
+  "title": "Positive Volume Index (PVI)",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 1
+   },
+   {
+    "name": "initial",
+    "arg": "initial",
+    "default": 1000
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "pvol",
+  "function": "pvol",
+  "category": "volume",
+  "title": "Price-Volume (PVOL)",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "pvr",
+  "function": "pvr",
+  "category": "volume",
+  "title": "Price Volume Rank",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "pvt",
+  "function": "pvt",
+  "category": "volume",
+  "title": "Price-Volume Trend (PVT)",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "drift",
+    "arg": "drift",
+    "default": 1
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "vfi",
+  "function": "vfi",
+  "category": "volume",
+  "title": "Volume Flow Indicator (VFI)",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "period",
+    "arg": "length",
+    "default": 130
+   },
+   {
+    "name": "coef",
+    "arg": "coef",
+    "default": 0.2
+   },
+   {
+    "name": "vcoef",
+    "arg": "vcoef",
+    "default": 2.5
+   },
+   {
+    "name": "mamode",
+    "arg": "mamode",
+    "default": "ema"
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "vosc",
+  "function": "vosc",
+  "category": "volume",
+  "title": "Volume Oscillator (VOSC)",
+  "inputs": [
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "fast",
+    "arg": "fast",
+    "default": 14
+   },
+   {
+    "name": "slow",
+    "arg": "slow",
+    "default": 28
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ },
+ {
+  "name": "vp",
+  "function": "vp",
+  "category": "volume",
+  "title": "Volume Profile (VP)",
+  "inputs": [
+   "close",
+   "volume"
+  ],
+  "params": [
+   {
+    "name": "width",
+    "arg": "width",
+    "default": 10
+   }
+  ],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "table"
+  },
+  "notes": "Returns a table (pandas.DataFrame) of price ranges for the whole history, not a per-candle value."
+ },
+ {
+  "name": "wad",
+  "function": "wad",
+  "category": "volume",
+  "title": "Williams Accumulation/Distribution (WAD)",
+  "inputs": [
+   "high",
+   "low",
+   "close"
+  ],
+  "params": [],
+  "fixed": {},
+  "overrides": {},
+  "returns": {
+   "kind": "value"
+  }
+ }
+]

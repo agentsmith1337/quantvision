@@ -4,6 +4,7 @@ import Editor, { loader, type Monaco } from "@monaco-editor/react";
 import type { Position, editor as MonacoEditor } from "monaco-editor";
 import { useTheme } from "next-themes";
 import { useEffect, useRef } from "react";
+import { apiGet } from "@/lib/api";
 import { chartPalette } from "@/lib/chart-theme";
 import { useScripts } from "@/lib/scripts-store";
 
@@ -26,22 +27,47 @@ const SDK: Record<string, Completion[]> = {
     { label: "log", insert: "log(${1})", detail: "log(*values)", doc: "Write to the run's log." },
     { label: "mode", insert: "mode", detail: "mode: 'paper' | 'live'", doc: "Follows the app's Paper/Live switch." },
   ],
+  // Helpers; the indicator shortcuts themselves come from /api/scripts/indicators.
   indicators: [
-    { label: "sma", insert: "sma(period=${1:20})", detail: "sma(period=20, symbol=None) -> float | None", doc: "Simple moving average." },
-    { label: "ema", insert: "ema(period=${1:20})", detail: "ema(period=20, symbol=None) -> float | None", doc: "Exponential moving average." },
-    { label: "wma", insert: "wma(period=${1:20})", detail: "wma(period=20, symbol=None) -> float | None", doc: "Weighted moving average." },
-    { label: "rsi", insert: "rsi(period=${1:14})", detail: "rsi(period=14, symbol=None) -> float | None", doc: "Relative strength index (0-100)." },
-    { label: "atr", insert: "atr(period=${1:14})", detail: "atr(period=14, symbol=None) -> float | None", doc: "Average true range, in rupees." },
-    { label: "vwap", insert: "vwap()", detail: "vwap(symbol=None) -> float | None", doc: "Volume-weighted average price, reset daily." },
-    { label: "macd", insert: "macd()", detail: "macd(fast=12, slow=26, signal=9, symbol=None)", doc: ".macd, .signal, .histogram" },
-    { label: "bbands", insert: "bbands(period=${1:20})", detail: "bbands(period=20, std=2.0, symbol=None)", doc: ".upper, .middle, .lower" },
-    { label: "stoch", insert: "stoch()", detail: "stoch(k=14, d=3, smooth_k=3, symbol=None)", doc: ".k, .d" },
-    { label: "supertrend", insert: "supertrend()", detail: "supertrend(period=7, multiplier=3.0, symbol=None)", doc: ".value, .direction (1 up, -1 down)" },
-    { label: "adx", insert: "adx(period=${1:14})", detail: "adx(period=14, symbol=None)", doc: ".adx, .plus_di, .minus_di" },
+    { label: "series", insert: 'series("${1:ema}", period=${2:20})', detail: "series(name, **params, symbol=None) -> Series | DataFrame", doc: "The indicator's full history." },
+    { label: "crossed_above", insert: "crossed_above(${1:a}, ${2:b})", detail: "crossed_above(a, b) -> bool", doc: "a crossed above b on the latest candle (Series or number)." },
+    { label: "crossed_below", insert: "crossed_below(${1:a}, ${2:b})", detail: "crossed_below(a, b) -> bool", doc: "a crossed below b on the latest candle (Series or number)." },
+    { label: "available", insert: "available()", detail: "available() -> dict[str, str]", doc: "Every indicator shortcut and its description." },
     { label: "df", insert: "df()", detail: "df(symbol=None) -> DataFrame", doc: "OHLCV history, with pandas-ta-classic's .ta accessor." },
   ],
   candle: ["symbol", "time", "open", "high", "low", "close", "volume"].map((f) => ({ label: f, insert: f, detail: `candle.${f}`, doc: "" })),
 };
+
+type CatalogParam = { name: string; default: unknown; same_as?: string };
+type CatalogEntry = {
+  name: string;
+  category: string;
+  title: string;
+  params: CatalogParam[];
+  returns: { kind: "value" | "fields" | "pattern" | "table"; fields?: string[] };
+  pair?: boolean;
+  notes?: string;
+};
+
+const pyValue = (v: unknown) => (v === null || v === undefined ? "None" : v === true ? "True" : v === false ? "False" : typeof v === "string" ? `'${v}'` : String(v));
+
+function indicatorCompletion(e: CatalogEntry): Completion {
+  const args = e.params.map((p) => `${p.name}=${pyValue(p.default)}`);
+  const returns =
+    e.returns.kind === "fields" ? `(${e.returns.fields?.map((f) => "." + f).join(", ")})` : e.returns.kind === "pattern" ? "int" : e.returns.kind === "table" ? "DataFrame" : "float | None";
+  // Snippet: the main parameter (period) or the pair's `other`, pre-filled with its default.
+  const first = e.params.find((p) => p.name === "other") ?? e.params.find((p) => p.name === "period");
+  const insert = first ? `${e.name}(${first.name}=\${1:${first.name === "other" ? '"NIFTY"' : pyValue(first.default)}})` : `${e.name}()`;
+  const notes = [e.notes, ...e.params.filter((p) => p.same_as).map((p) => `${p.name} defaults to ${p.same_as}.`)].filter(Boolean).join(" ");
+  return { label: e.name, insert, detail: `${e.name}(${[...args, "symbol=None"].join(", ")}) -> ${returns}`, doc: `${e.title} (${e.category}).${notes ? " " + notes : ""}` };
+}
+
+let catalog: Promise<CatalogEntry[]> | null = null;
+const loadCatalog = () =>
+  (catalog ??= apiGet<CatalogEntry[]>("/api/scripts/indicators").catch(() => {
+    catalog = null; // retry on the next completion request
+    return [];
+  }));
 
 let completionsRegistered = false;
 
@@ -60,14 +86,29 @@ function setup(monaco: Monaco) {
   completionsRegistered = true;
   monaco.languages.registerCompletionItemProvider("python", {
     triggerCharacters: ["."],
-    provideCompletionItems(model: MonacoEditor.ITextModel, position: Position) {
+    async provideCompletionItems(model: MonacoEditor.ITextModel, position: Position) {
       const before = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column });
-      const match = before.match(/\b(api|indicators|candle)\.(\w*)$/);
-      if (!match) return { suggestions: [] };
       const word = model.getWordUntilPosition(position);
       const range = { startLineNumber: position.lineNumber, endLineNumber: position.lineNumber, startColumn: word.startColumn, endColumn: word.endColumn };
+      // Fields of a multi-value indicator: indicators.macd(...).histogram
+      const fieldMatch = before.match(/\bindicators\.(\w+)\([^()]*\)\.(\w*)$/);
+      if (fieldMatch) {
+        const entry = (await loadCatalog()).find((e) => e.name === fieldMatch[1]);
+        return {
+          suggestions: (entry?.returns.fields ?? []).map((f) => ({
+            label: f,
+            kind: monaco.languages.CompletionItemKind.Field,
+            insertText: f,
+            detail: `${entry?.name}().${f}`,
+            range,
+          })),
+        };
+      }
+      const match = before.match(/\b(api|indicators|candle)\.(\w*)$/);
+      if (!match) return { suggestions: [] };
+      const items = match[1] === "indicators" ? [...SDK.indicators, ...(await loadCatalog()).map(indicatorCompletion)] : SDK[match[1]];
       return {
-        suggestions: SDK[match[1]].map((c) => ({
+        suggestions: items.map((c) => ({
           label: c.label,
           kind: c.insert.includes("(") ? monaco.languages.CompletionItemKind.Method : monaco.languages.CompletionItemKind.Field,
           insertText: c.insert,

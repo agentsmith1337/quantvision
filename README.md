@@ -30,8 +30,12 @@ in-app **API Docs** page (source: `backend/sdk/sdk_reference.md`).
 
 - Scripts are plain `.py` files in `Documents/QuantVision/scripts/`.
 - Each run is a separate Python process in its own environment (`Documents/QuantVision/runtime`,
-  created automatically on first launch, about a minute) with pandas and pandas-ta-classic.
+  created automatically on first launch, about a minute) with pandas, pandas-ta-classic and TA-Lib.
   Scripts never receive broker credentials.
+- Every pandas-ta-classic indicator and TA-Lib candlestick pattern is a named shortcut
+  (`indicators.rsi(period=14)`, `indicators.macd().histogram`, `indicators.cdl_engulfing()`). They're
+  generated from `backend/sdk/quantvision/indicator_catalog.json`; after upgrading either library run
+  `python sdk/tools/build_indicators.py` in `backend/` to regenerate the catalog and the API docs.
 - Orders follow the global Paper/Live switch and pass the same risk limits as manual orders, plus a
   per-run limit of 10 orders a minute. The **Kill switch** in the top bar stops every script and
   cancels all open orders.

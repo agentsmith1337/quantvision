@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field
 
@@ -49,7 +49,8 @@ def delete_key() -> dict:
 
 
 @router.get("/{symbol}")
-async def stock_news(symbol: str, refresh: bool = False) -> dict:
+async def stock_news(symbol: str, refresh: bool = False, q: str | None = Query(None, max_length=500)) -> dict:
+    """News for a stock; `q` replaces the default "Company" OR "SYMBOL" search."""
     inst = registry.get(symbol)
     if inst is None:
         raise HTTPException(404, f"Unknown symbol {symbol}")
@@ -57,7 +58,7 @@ async def stock_news(symbol: str, refresh: bool = False) -> dict:
     if api_key is None:
         return {"symbol": inst.symbol, "configured": False, "articles": [], "usage": news.usage()}
     try:
-        payload = await run_in_threadpool(news.articles, inst, api_key, refresh)
+        payload = await run_in_threadpool(news.articles, inst, api_key, refresh, q)
     except NewsError as e:
         raise HTTPException(502, str(e)) from e
     return {**payload, "configured": True, "usage": news.usage()}

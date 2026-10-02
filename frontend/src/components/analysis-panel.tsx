@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { apiGet, type Candle, type Interval, type NewsPayload } from "@/lib/api";
 import { changeColor, formatPrice } from "@/lib/format";
 import { useTick } from "@/lib/market-socket";
@@ -21,14 +21,15 @@ export function AnalysisPanel({ symbol, interval }: { symbol: string; interval: 
       {label}
     </button>
   );
+  // No inner scrollbar: the panel grows with its content and the page scrolls.
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <div>
       <div className="flex gap-4 border-b border-border px-4 pt-2">
         {tab("metrics", "Technical metrics")}
         {tab("news", "Live news")}
         {tab("ai", "AI analysis")}
       </div>
-      <div className="min-h-0 flex-1 overflow-auto">
+      <div className="min-h-40">
         {mode === "metrics" && <TechnicalMetrics symbol={symbol} interval={interval} />}
         {mode === "news" && <NewsFeed symbol={symbol} />}
         {mode === "ai" && <p className="p-4 text-sm text-muted">AI sentiment analysis of the news feed arrives in Phase 6.</p>}
@@ -123,6 +124,38 @@ function TechnicalMetrics({ symbol, interval }: { symbol: string; interval: Inte
 
 // --- News ------------------------------------------------------------------------------------
 
+/** Editable GNews query; starts with the query the results came from. */
+function NewsQuery({ initial, custom, onSearch }: { initial: string; custom: boolean; onSearch: (q: string) => void }) {
+  const [draft, setDraft] = useState(initial);
+  return (
+    <form
+      className="flex min-w-64 flex-1 items-center gap-2"
+      onSubmit={(e) => {
+        e.preventDefault();
+        const q = draft.trim();
+        if (q && q !== initial) onSearch(q);
+      }}
+    >
+      <input
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        maxLength={200}
+        aria-label="News search query"
+        title='GNews search: use quotes for phrases, OR / AND / NOT to combine, e.g. "Tata Motors" AND EV'
+        className="min-w-0 flex-1 rounded-md border border-border bg-surface-2 px-2 py-1 font-mono text-[11px] text-fg outline-none focus:border-accent"
+      />
+      <button type="submit" disabled={!draft.trim() || draft.trim() === initial} className="shrink-0 rounded-md bg-accent px-2 py-1 font-medium text-accent-fg disabled:opacity-40">
+        Search
+      </button>
+      {custom && (
+        <button type="button" onClick={() => onSearch("")} className="shrink-0 text-accent hover:underline">
+          Reset
+        </button>
+      )}
+    </form>
+  );
+}
+
 const ago = (iso: string | null) => {
   if (!iso) return "";
   const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
@@ -131,16 +164,42 @@ const ago = (iso: string | null) => {
   return `${Math.round(mins / 1440)}d ago`;
 };
 
+const newsPath = (symbol: string, query: string, refresh = false) => {
+  const params = new URLSearchParams();
+  if (query) params.set("q", query);
+  if (refresh) params.set("refresh", "true");
+  const qs = params.toString();
+  return `/api/news/${encodeURIComponent(symbol)}${qs ? `?${qs}` : ""}`;
+};
+
 function NewsFeed({ symbol }: { symbol: string }) {
+  // The user's own search per stock ("" = the default company/symbol search).
+  const [queries, setQueries] = useState<Record<string, string>>({});
+  const query = queries[symbol] ?? "";
+  const [fullScreen, setFullScreen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [override, setOverride] = useState<NewsPayload | null>(null);
-  const { data, error } = useApi<NewsPayload>(`/api/news/${encodeURIComponent(symbol)}`, { intervalMs: 10 * 60_000 });
-  const news = override?.symbol === symbol ? override : data;
+  const [override, setOverride] = useState<{ key: string; payload: NewsPayload } | null>(null);
+  const path = newsPath(symbol, query);
+  const { data, error } = useApi<NewsPayload>(path, { intervalMs: 10 * 60_000 });
+  const news = override?.key === path ? override.payload : data;
+  const setQuery = (q: string) => setQueries((all) => ({ ...all, [symbol]: q }));
+
+  useEffect(() => {
+    if (!fullScreen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setFullScreen(false);
+    window.addEventListener("keydown", onKey);
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = overflow;
+    };
+  }, [fullScreen]);
 
   const refresh = async () => {
     setRefreshing(true);
     try {
-      setOverride(await apiGet<NewsPayload>(`/api/news/${encodeURIComponent(symbol)}?refresh=true`));
+      setOverride({ key: path, payload: await apiGet<NewsPayload>(newsPath(symbol, query, true)) });
     } catch {
       /* the error shows via the next load */
     } finally {
@@ -148,7 +207,66 @@ function NewsFeed({ symbol }: { symbol: string }) {
     }
   };
 
-  if (error) return <p className="p-4 text-xs text-down">{error}</p>;
+  const body = (
+    <NewsBody
+      symbol={symbol}
+      news={news}
+      error={error}
+      query={query}
+      onSearch={setQuery}
+      refreshing={refreshing}
+      onRefresh={() => void refresh()}
+      fullScreen={fullScreen}
+      onToggleFullScreen={() => setFullScreen((f) => !f)}
+    />
+  );
+  if (!fullScreen) return body;
+  return (
+    <>
+      <p className="p-4 text-xs text-muted">News is open in full screen.</p>
+      <div role="dialog" aria-modal="true" aria-label={`News for ${symbol}`} className="fixed inset-0 z-50 overflow-y-auto bg-bg">
+        <div className="mx-auto max-w-4xl py-6">
+          <h2 className="px-4 pb-3 text-lg font-semibold">News · {symbol}</h2>
+          <div className="rounded-xl border border-border bg-surface">{body}</div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function NewsBody({
+  symbol,
+  news,
+  error,
+  query,
+  onSearch,
+  refreshing,
+  onRefresh,
+  fullScreen,
+  onToggleFullScreen,
+}: {
+  symbol: string;
+  news: NewsPayload | null;
+  error: string | null;
+  query: string;
+  onSearch: (q: string) => void;
+  refreshing: boolean;
+  onRefresh: () => void;
+  fullScreen: boolean;
+  onToggleFullScreen: () => void;
+}) {
+  if (error && !news) {
+    return (
+      <div className="space-y-2 p-4 text-xs">
+        <p className="text-down">{error}</p>
+        {query && (
+          <button onClick={() => onSearch("")} className="text-accent hover:underline">
+            Back to the default search
+          </button>
+        )}
+      </div>
+    );
+  }
   if (!news) return <p className="p-4 text-xs text-muted">Loading news…</p>;
   if (!news.configured) {
     return (
@@ -163,15 +281,16 @@ function NewsFeed({ symbol }: { symbol: string }) {
   }
   return (
     <div>
-      <div className="flex items-center gap-3 border-b border-border px-4 py-1.5 text-[11px] text-muted">
-        <span className="truncate" title="GNews search query">
-          {news.query}
-        </span>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-border px-4 py-2 text-[11px] text-muted">
+        <NewsQuery key={`${symbol}:${news.query}`} initial={news.query ?? ""} custom={!!query} onSearch={onSearch} />
         <span className="ml-auto shrink-0">
           {news.usage.today}/{news.usage.limit} requests today
         </span>
-        <button onClick={() => void refresh()} disabled={refreshing} className="shrink-0 text-accent hover:underline disabled:opacity-50">
+        <button onClick={onRefresh} disabled={refreshing} className="shrink-0 text-accent hover:underline disabled:opacity-50">
           {refreshing ? "Refreshing…" : "Refresh"}
+        </button>
+        <button onClick={onToggleFullScreen} className="shrink-0 rounded-md border border-border px-2 py-0.5 text-fg hover:bg-surface-2" title={fullScreen ? "Close (Esc)" : "Expand to full screen"}>
+          {fullScreen ? "Close ✕" : "⤢ Full screen"}
         </button>
       </div>
       {news.articles.length === 0 ? (

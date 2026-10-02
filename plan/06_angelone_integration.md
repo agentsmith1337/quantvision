@@ -64,7 +64,7 @@ Symbol search does **not** call SmartAPI's `searchScrip()` (rate-limited to roug
 To provide a simple, TradingView-like coding experience while retaining the power of `Backtrader`, users write **one plain function**, `on_candle`, and QuantVision runs it everywhere: paper trading, live trading and (Phase 4) backtests.
 
 ### 7.1 Engines
-1.  **Technical Indicators (`pandas-ta-classic`):** Angel One does not provide technical indicators. The SDK bundles `pandas-ta-classic` (the maintained, MIT-licensed fork of `pandas-ta`, same API, 190+ indicators; the original `pandas-ta` does not install on Python 3.14).
+1.  **Technical Indicators (`pandas-ta-classic`):** Angel One does not provide technical indicators. The SDK bundles `pandas-ta-classic` (the maintained, MIT-licensed fork of `pandas-ta`, same API, 190+ indicators; the original `pandas-ta` does not install on Python 3.14), plus `TA-Lib` (its official Python wheels) for the 60 candlestick patterns pandas-ta delegates to it. Indicator values always use pandas-ta's own Python implementations (`talib=False`) so they're consistent with its documentation.
 2.  **Live / paper runs:** QuantVision's own runner. The engine builds candles from the live tick stream and calls the user's `on_candle` as each candle closes. Orders go through the same broker, risk limits and kill switch as manual trading, and follow the **global Paper/Live switch** (if the switch is changed while a script runs, its next orders use the new mode).
 3.  **Backtests (Phase 4):** FastAPI generates a `Backtrader` strategy class that wraps the *same* `on_candle` function, so a script runs unchanged in a backtest.
 
@@ -96,10 +96,14 @@ def on_candle(candle, indicators, api):
 
 **`candle`**: `symbol`, `time` (IST `datetime` of the candle start), `open`, `high`, `low`, `close`, `volume`.
 
-**`indicators`**: values for the **latest closed candle**, calculated with `pandas-ta-classic` on that stock's history (the run starts with ~300 historical candles per stock):
-*   `sma(period, symbol=None)`, `ema`, `wma`, `rsi`, `atr`, `vwap(symbol=None)` → a number (or `None` while not enough history).
-*   `macd(fast=12, slow=26, signal=9)` → `.macd`, `.signal`, `.histogram`; `bbands(period=20, std=2)` → `.upper`, `.middle`, `.lower`; `stoch(k=14, d=3, smooth_k=3)` → `.k`, `.d`; `supertrend(period=7, multiplier=3)` → `.value`, `.direction` (1 up, -1 down); `adx(period=14)` → `.adx`, `.plus_di`, `.minus_di`.
-*   `df(symbol=None)` → the full OHLCV `pandas.DataFrame`, for any other `pandas-ta-classic` indicator (`indicators.df().ta.cci(length=20)`).
+**`indicators`**: values for the **latest closed candle**, calculated with `pandas-ta-classic` on that stock's history (the run starts with ~300 historical candles per stock). **Every** pandas-ta-classic indicator and every TA-Lib candlestick pattern is a named shortcut (246 in all), so strategies (including agent-written ones) never need raw DataFrame code:
+*   **Single-value** (`rsi(period=14)`, `cci`, `obv`, `vwap`, …) → a number, or `None` while there isn't enough history.
+*   **Multi-value** → named fields: `macd()` → `.macd`, `.signal`, `.histogram`; `bbands(period=20, std=2)` → `.upper`, `.middle`, `.lower`, `.bandwidth`, `.percent`; `supertrend()` → `.value`, `.direction` (1 up, -1 down), `.long`, `.short`; `adx()` → `.adx`, `.plus_di`, `.minus_di`; `ichimoku()`, `kc()`, `squeeze()`, …
+*   **Candlestick patterns** `cdl_<pattern>()` (`cdl_engulfing`, `cdl_hammer`, `cdl_morningstar(penetration=0.3)`, … 62 in all, via TA-Lib) → 100 bullish, -100 bearish, 0 none.
+*   **Two-stock statistics** `beta(other="NIFTY")`, `correl(other=...)`.
+*   Naming: pandas-ta's `length` is `period` (`length=` also accepted); other parameters keep pandas-ta's names; `symbol=` is keyword-only. `offset` is never exposed (it shifts data and invites look-ahead bias); `dpo` is non-centred and ichimoku's forward cloud isn't returned for the same reason.
+*   Helpers: `series(name, **params)` (full history: Series, or DataFrame with field-name columns), `crossed_above(a, b)` / `crossed_below(a, b)` (Series vs Series or number, on the latest candle), `available()`, `df(symbol=None)` (OHLCV DataFrame with the `.ta` accessor).
+*   **Single source of truth:** `backend/sdk/tools/build_indicators.py` introspects pandas-ta-classic and TA-Lib and writes `sdk/quantvision/indicator_catalog.json` (names, parameters, defaults, return fields). The SDK builds its methods from it, `GET /api/scripts/indicators` serves it to the editor's autocomplete, and the generator regenerates the *Indicator reference* section of `sdk_reference.md`. A test fails if the catalog is stale after a library upgrade.
 
 **`api`**: the only way a script reaches the broker. The script never sees credentials.
 *   `buy(quantity, symbol=None, order_type="MARKET", price=None, trigger_price=None, product="DELIVERY")`, `sell(...)` → the order (`.order_id`, `.status`, `.average_price`, …). `product="INTRADAY"` for margin/shorting.

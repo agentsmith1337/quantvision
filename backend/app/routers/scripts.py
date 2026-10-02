@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,6 +13,7 @@ from app.security import require_session
 router = APIRouter(prefix="/api", dependencies=[Depends(require_session)])
 
 REFERENCE = SDK_DIR / "sdk_reference.md"
+INDICATORS = SDK_DIR / "quantvision" / "indicator_catalog.json"
 
 
 def _err(e: Exception) -> HTTPException:
@@ -31,6 +33,17 @@ def list_scripts() -> list[dict]:
 @router.get("/scripts/reference")
 def reference() -> dict:
     return {"markdown": Path(REFERENCE).read_text(encoding="utf-8")}
+
+
+@router.get("/scripts/indicators")
+def indicator_catalog() -> list[dict]:
+    """Every `indicators.<name>()` shortcut, for the editor's autocomplete and agents writing scripts."""
+    entries = json.loads(INDICATORS.read_text(encoding="utf-8"))
+    keys = ("name", "category", "title", "params", "returns", "pair", "notes")
+    return [
+        {**{k: e[k] for k in keys if k in e}, "params": [{k: v for k, v in p.items() if k != "arg"} for p in e["params"]]}
+        for e in entries
+    ]
 
 
 @router.get("/scripts/runtime")

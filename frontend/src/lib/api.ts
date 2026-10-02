@@ -199,6 +199,7 @@ export type NewsPayload = {
   symbol: string;
   configured: boolean;
   query?: string;
+  default_query?: string;
   fetched_at?: string;
   cached?: boolean;
   articles: NewsArticle[];

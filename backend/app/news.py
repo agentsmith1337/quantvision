@@ -25,6 +25,8 @@ DAILY_LIMIT = 100  # GNews free plan
 CACHE_SECONDS = 30 * 60
 MIN_REFRESH_SECONDS = 120
 MAX_ARTICLES = 10
+MAX_QUERY = 200  # characters; GNews rejects very long queries
+MAX_CACHED = 200  # (stock, query) results kept in memory
 IST = timezone(timedelta(hours=5, minutes=30))
 
 
@@ -61,7 +63,7 @@ def _fetch(params: dict) -> dict:
 
 class NewsService:
     def __init__(self) -> None:
-        self._cache: dict[str, tuple[float, dict]] = {}
+        self._cache: dict[tuple[str, str], tuple[float, dict]] = {}
         self._lock = threading.Lock()
 
     # --- key management (stored encrypted in the vault) -----------------------------------
@@ -91,14 +93,17 @@ class NewsService:
 
     # --- articles ------------------------------------------------------------------------------
 
-    def articles(self, inst: Instrument, api_key: str, refresh: bool = False) -> dict:
+    def articles(self, inst: Instrument, api_key: str, refresh: bool = False, query: str | None = None) -> dict:
+        """News for a stock: the default company/symbol search, or the user's own `query`."""
+        default = build_query(inst)
+        query = " ".join((query or "").split())[:MAX_QUERY] or default
+        cache_key = (inst.symbol, query)
         now = time.time()
         with self._lock:
-            hit = self._cache.get(inst.symbol)
+            hit = self._cache.get(cache_key)
         if hit and (now - hit[0] < (MIN_REFRESH_SECONDS if refresh else CACHE_SECONDS)):
             return {**hit[1], "cached": True}
 
-        query = build_query(inst)
         params = {"q": query, "lang": "en", "max": MAX_ARTICLES, "sortby": "publishedAt", "apikey": api_key}
         try:
             data = self._request(params)
@@ -111,6 +116,7 @@ class NewsService:
         payload = {
             "symbol": inst.symbol,
             "query": query,
+            "default_query": default,
             "fetched_at": datetime.now(IST).isoformat(),
             "articles": [
                 {
@@ -126,7 +132,9 @@ class NewsService:
             ],
         }
         with self._lock:
-            self._cache[inst.symbol] = (now, payload)
+            self._cache[cache_key] = (now, payload)
+            for stale in sorted(self._cache, key=lambda k: self._cache[k][0])[: max(0, len(self._cache) - MAX_CACHED)]:
+                del self._cache[stale]
         return {**payload, "cached": False}
 
     def _request(self, params: dict) -> dict:

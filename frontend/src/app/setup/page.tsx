@@ -621,7 +621,7 @@ function ScriptRuntimeSettings() {
           ? r.message
           : "Not installed yet";
   return (
-    <Section id="scripts" title="Script environment" description="Strategy scripts run in their own Python environment with pandas and pandas-ta-classic, separate from QuantVision itself.">
+    <Section id="scripts" title="Script environment" description="Strategy scripts run in their own Python environment with pandas, pandas-ta-classic and TA-Lib, separate from QuantVision itself.">
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <span className={`rounded-full px-3 py-1 text-xs font-semibold ${r?.state === "ready" ? "bg-up/15 text-up" : r?.state === "error" ? "bg-down/15 text-down" : "bg-surface-2 text-muted"}`}>
           {r?.state ?? "…"}
