@@ -66,6 +66,7 @@ class InstrumentRow(Base):
     trading_symbol: Mapped[str] = mapped_column(String(64))
     token: Mapped[str] = mapped_column(String(32))
     name: Mapped[str] = mapped_column(String(128))
+    is_index: Mapped[bool] = mapped_column(default=False)
 
 
 # scrypt from the stdlib: no native build dependency, memory-hard.

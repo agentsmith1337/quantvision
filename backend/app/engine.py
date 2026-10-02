@@ -19,10 +19,12 @@ from app.config import settings
 from app.market.feeds import AngelOneFeed, MarketFeed, SimulatedFeed
 from app.market.hub import FeedStatus, MarketHub
 from app.market.instruments import Instrument, registry
+from app.market.scripmaster import scripmaster
 
 log = logging.getLogger(__name__)
 IST = timezone(timedelta(hours=5, minutes=30))
 POLL_SECONDS = 3
+SCRIP_MASTER_CACHE = settings.home_dir / "scripmaster.json"
 
 
 def market_hours(now: datetime | None = None) -> bool:
@@ -198,9 +200,14 @@ class Engine:
             self.feed.ensure_subscribed(instruments)
 
     def search(self, query: str, abort: threading.Event | None = None) -> list[Instrument]:
+        """Search Angel One's daily scrip master locally: no SmartAPI calls per keystroke."""
         q = query.strip().upper()
         if len(q) < 2:
             return []
+        scripmaster.ensure_fresh(SCRIP_MASTER_CACHE)  # cheap unless a new day's file is due
+        if scripmaster.loaded:
+            return [registry.preview(r) for r in scripmaster.search(q)]
+        # Scrip master not downloaded yet (first run offline): fall back to Angel One's search.
         local = registry.local_search(q)
         if self.live is None:
             return local

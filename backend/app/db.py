@@ -31,7 +31,7 @@ def _migrate() -> None:
     """Add columns introduced after a table was first created (SQLite has no auto-migrate)."""
     from sqlalchemy import inspect, text
 
-    added = {"users": {"vault_salt": "VARCHAR(64)"}}
+    added = {"users": {"vault_salt": "VARCHAR(64)"}, "instruments": {"is_index": "BOOLEAN NOT NULL DEFAULT 0"}}
     insp = inspect(engine)
     with engine.begin() as conn:
         for table, columns in added.items():

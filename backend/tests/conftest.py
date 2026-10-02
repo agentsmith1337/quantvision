@@ -15,9 +15,28 @@ os.environ.update({
     "ANGEL_API_KEY": "", "ANGEL_CLIENT_CODE": "", "ANGEL_PIN": "", "ANGEL_TOTP_SECRET": "",
 })
 
+from datetime import datetime  # noqa: E402
+
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app.main import app  # noqa: E402
+from app.market.scripmaster import IST, ScripRow, scripmaster  # noqa: E402
+
+# A small scrip master dated today, so the app never downloads the real 34 MB file in tests.
+SCRIP_ROWS = [
+    ScripRow("NSE", "RELIANCE-EQ", "2885", "RELIANCE", False, "Reliance Industries"),
+    ScripRow("NSE", "TATASTEEL-EQ", "3499", "TATASTEEL", False, "Tata Steel"),
+    ScripRow("NSE", "TATAPOWER-EQ", "3426", "TATAPOWER", False, "The Tata Power Company"),
+    ScripRow("NSE", "HDFCBANK-EQ", "1333", "HDFCBANK", False, "HDFC Bank"),
+    ScripRow("NSE", "HDFCAMC-EQ", "4244", "HDFCAMC", False, "HDFC Asset Management Company"),
+    ScripRow("NSE", "M&M-EQ", "2031", "M&M", False, "Mahindra & Mahindra"),
+    ScripRow("NSE", "SBIN-EQ", "3045", "SBIN", False, "State Bank of India"),
+    ScripRow("BSE", "RELIANCE", "500325", "RELIANCE", False, "Reliance Industries"),
+    ScripRow("BSE", "UTIQUE", "500014", "UTIQUE", False),  # BSE-only: no company name
+    ScripRow("NSE", "Nifty 50", "99926000", "NIFTY", True, "Nifty 50"),
+    ScripRow("NSE", "Nifty IT", "99926008", "NIFTY IT", True, "Nifty IT"),
+]
+scripmaster.set_rows(SCRIP_ROWS, datetime.now(IST).date().isoformat())
 
 USER = {"username": "trader", "password": "correct horse battery"}
 FAKE_ANGEL = {"api_key": "AbCd1234", "client_code": "A1234567", "pin": "1234", "totp_secret": "JBSWY3DPEHPK3PXPJBSWY3DPEH"}

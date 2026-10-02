@@ -187,7 +187,7 @@ function GlobalSearch() {
     <SymbolSearch
       id={SEARCH_ID}
       className="w-full max-w-md"
-      placeholder="Search stocks and indices…  ( / )"
+      placeholder="Search by company name or symbol…  ( / )"
       onSelect={(inst) => router.push(`/trade/?symbol=${encodeURIComponent(inst.symbol)}`)}
     />
   );
