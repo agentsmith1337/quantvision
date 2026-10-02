@@ -5,7 +5,7 @@ The application will utilize a persistent global layout wrapper (`layout.tsx` in
 
 *   **Left Sidebar (Expandable):**
     *   **Header:** QuantVision Logo (utilizing the provided `assets/icon.svg`).
-    *   **Navigation:** Icons and labels for Home, Portfolio, Trading Dashboard, and Backtesting Studio.
+    *   **Navigation:** Icons and labels for Home, Portfolio, Trading Dashboard, Backtesting Studio, and API Docs.
     *   **Behavior:** Can be collapsed to show only icons, maximizing screen real estate for charts and IDE.
 *   **Top Navigation Bar:**
     *   **Right Side:** A consistent User Profile Picture. Clicking it reveals an "Account Options" dropdown card containing links to Settings, API Configuration, a **Theme Toggle** (Day Mode, Evening Mode, Dark Mode), and Sign Out.
@@ -41,7 +41,7 @@ This is the core operational screen for monitoring live markets, manual trading,
     *   **Top Area (Price Graph):** Integrated `react-financial-charts` for candlestick rendering, drawing tools (trendlines, Fibonacci), and native technical overlays.
     *   **Bottom Area (Analysis Tri-Mode):** A tabbed component situated below the chart.
         *   *Mode 1 (Technical Metrics):* Displays calculated technical indicators and standard market values.
-        *   *Mode 2 (Live News Feed):* A real-time stream of financial news articles relevant to the current stock, powered by the **Gnews** and **Mediastack** APIs.
+        *   *Mode 2 (Live News Feed):* A real-time stream of financial news articles relevant to the current stock, powered by the **Gnews** API.
         *   *Mode 3 (AI Analysis):* An AI interface (future development) that digests the news feed to provide instant sentiment analysis.
 *   **Right Column (Execution & History):**
     *   **Top Area (Trade History):** A real-time scrolling feed of executed trades.
@@ -66,6 +66,10 @@ A dedicated, full-screen environment for developing and simulating algorithmic s
         *   **Equity Curve Chart:** Visualizing portfolio value over time vs benchmark.
         *   **Metrics Panel:** Sharpe Ratio, Max Drawdown, Win Rate, Total P&L.
         *   **Trade Log:** A detailed table of every simulated buy/sell execution.
+
+### 2.6. API Documentation Page (`/docs`)
+*   **Purpose:** A dedicated, full-screen reference manual for writing algorithmic trading scripts in the QuantVision IDE. Accessed via the main Left Sidebar.
+*   **Content:** Renders the internal `sdk_reference.md` file using a Markdown viewer. It details the `pandas-ta` indicators, the `on_candle` event loop, and the custom wrapper commands (e.g., `api.buy()`).
 
 ## 3. UI/UX Technology Stack
 *   **Framework:** Next.js (App Router) built as a static export.

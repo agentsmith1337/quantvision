@@ -60,13 +60,18 @@ Symbol search does **not** call SmartAPI's `searchScrip()` (rate-limited to roug
 5.  **Resolve tokens on demand:** any symbol opened from search, a URL or the watchlist is looked up in the file and registered (with its token) in SQLite on first use.
 6.  `searchScrip()` remains only as a fallback when no copy of the file has ever been downloaded.
 
-## 7. Algorithmic Script Wrapper
-To prevent users from having to manage raw API calls in their trading scripts, we will provide a helper class injected into their script environment:
+## 7. Algorithmic Script Wrapper & Wrapping Engine
+To provide a simple, TradingView-like coding experience while retaining the power of `Backtrader`, we will implement a **Dynamic Wrapping Engine** in the FastAPI backend.
+
+1.  **Technical Indicators (`pandas-ta`):** Angel One does not provide technical indicators. We will bundle the open-source `pandas-ta` library into the QuantVision Python SDK, giving users instant access to 130+ indicators without calculating them from scratch.
+2.  **The Wrapper:** Users write a very simple function in the IDE. When they click "Run", FastAPI dynamically generates the complex `Backtrader` Class in the background, injects the user's logic, and handles the raw Angel One API calls automatically.
 
 ```python
-# Example of what a user's script will look like
-def on_tick(ticker, price, api):
-    # 'api' is an injected wrapper that handles the actual Angel One calls safely
-    if price < 100:
-        api.buy(ticker, quantity=10)
+# Example of what a user's script will look like in the IDE
+def on_candle(candle, indicators, api):
+    # 'indicators' uses pandas-ta under the hood. 'api' handles raw Angel One calls safely.
+    sma_20 = indicators.sma(period=20)
+    
+    if candle.close > sma_20:
+        api.buy(quantity=10)
 ```
