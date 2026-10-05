@@ -26,6 +26,7 @@ from app.market.feeds import FeedUnavailable
 from app.market.hub import MarketHub
 from app.market.instruments import Instrument, registry
 from app.scripts.candles import STEPS, CandleBuilder
+from app.scripts.performance import RunPerformance
 from app.scripts.runtime import NO_WINDOW, ScriptRuntime
 from app.scripts.store import ScriptError, ScriptStore, check_syntax, script_defaults
 
@@ -81,6 +82,7 @@ class Run:
         self._fatal: str | None = None
         self._unsubs: list = []
         self._lock = threading.RLock()
+        self.perf = RunPerformance(instruments, lambda s: (t.ltp if (t := mgr.hub.last_tick(s)) else None))
         log_dir = mgr.logs_dir
         log_dir.mkdir(parents=True, exist_ok=True)
         self._logfile = (log_dir / f"{script_path.stem}-{info.id}.log").open("a", encoding="utf-8")
@@ -93,6 +95,7 @@ class Run:
     def _main(self) -> None:
         try:
             history = self._load_history()
+            self.perf.set_history(history)
             if self._stopping.is_set():
                 return
             self._spawn()
@@ -229,6 +232,7 @@ class Run:
             state, message = "failed", f"Script process exited with code {code}"
         else:
             state, message = "finished", ""
+        self.perf.sample()
         self._set(state=state, message=message, ended_at=datetime.now(UTC).isoformat())
         self.log("info", f"Run {state}{': ' + message if message else ''}")
         self._logfile.close()
@@ -240,14 +244,18 @@ class Run:
         if self.info.state == "running":
             with self._lock:
                 self.info.candles += 1
+            self.perf.on_candle(symbol, candle)
             self.outbox.put({"type": "candle", "symbol": symbol, "candle": candle})
 
     def on_order(self, order: Order) -> None:
         # Match by tag too: an instant paper fill is announced before place_order returns its id.
         mine = order.order_id in self._order_ids or order.source == self.info.tag
-        if mine and self.info.state == "running":
-            with self._lock:
-                self._order_ids.add(order.order_id)
+        if not mine:
+            return
+        with self._lock:
+            self._order_ids.add(order.order_id)
+        self.perf.on_order(order)  # fills after a stop still count towards the run's results
+        if self.info.state == "running":
             self.outbox.put({"type": "order", "order": order.to_dict()})
 
     def on_mode(self, mode: str) -> None:
@@ -307,6 +315,7 @@ class Run:
         side, qty = params.get("side"), params.get("quantity")
 
         def rejected(message: str) -> dict:
+            self.perf.order_rejected_before_broker()
             self.log("warning", f"{side} {qty} {symbol} rejected: {message}")
             return {"order_id": "", "symbol": symbol, "side": side, "order_type": params.get("order_type"), "product": params.get("product"),
                     "quantity": qty, "filled_quantity": 0, "price": params.get("price"), "trigger_price": params.get("trigger_price"),
@@ -334,6 +343,8 @@ class Run:
         with self._lock:
             self._order_ids.add(order.order_id)
             self.info.orders += 1
+        self.perf.order_placed()
+        self.perf.on_order(order)
         fill = f" @ ₹{order.average_price:,.2f}" if order.average_price else ""
         self.log("info", f"{order.side} {order.quantity} {symbol} {order.order_type} → {order.status}{fill} ({order.order_id})")
         self.mgr.broadcast(self)
@@ -478,8 +489,13 @@ class RunManager:
         for r in finished[:-20]:
             del self._runs[r.info.id]
 
+    def performance(self, run_id: str, symbol: str | None = None) -> dict:
+        return self.get(run_id).perf.snapshot(symbol)
+
     def _on_order(self, order: Order) -> None:
-        for run in self.active():
+        with self._lock:
+            runs = list(self._runs.values())
+        for run in runs:
             run.on_order(order)
 
     def _on_mode(self, mode: str) -> None:

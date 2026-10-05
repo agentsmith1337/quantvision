@@ -5,3 +5,5 @@ python-dateutil==2.9.0.post0
 six==1.17.0
 tzdata==2026.4
 ta-lib==0.8.1
+backtrader==1.9.78.123
+pyarrow==25.0.1

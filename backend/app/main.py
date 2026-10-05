@@ -16,7 +16,7 @@ from app.engine import SCRIP_MASTER_CACHE, engine
 from app.market.hub import hub
 from app.market.instruments import registry
 from app.market.scripmaster import scripmaster
-from app.routers import auth, broker, market, news, scripts, trading
+from app.routers import auth, backtests, broker, market, news, scripts, trading
 from app.scripts import service as scripts_service
 from app.routers import settings as settings_router
 
@@ -86,6 +86,7 @@ app.include_router(market.ws_router)
 app.include_router(trading.router)
 app.include_router(scripts.router)
 app.include_router(news.router)
+app.include_router(backtests.router)
 app.include_router(settings_router.router)
 
 # Mounted last so /api and /ws routes take precedence over the static UI.

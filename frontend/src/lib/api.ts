@@ -205,3 +205,126 @@ export type NewsPayload = {
   articles: NewsArticle[];
   usage: { today: number; limit: number };
 };
+
+// --- Backtests -------------------------------------------------------------------
+
+export type BacktestState = "preparing" | "running" | "done" | "error" | "cancelled";
+export type BacktestSummary = {
+  final_value: number;
+  net_pnl: number;
+  total_return_pct: number;
+  cagr_pct: number | null;
+  sharpe: number | null;
+  sortino?: number | null;
+  max_drawdown_pct: number;
+  max_drawdown_days?: number;
+  win_rate_pct: number | null;
+  trades: number;
+  total_charges: number;
+  benchmark_return_pct?: number;
+  profit_factor?: number | null;
+  avg_trade_pnl?: number | null;
+  avg_win?: number | null;
+  avg_loss?: number | null;
+  best_trade?: number | null;
+  worst_trade?: number | null;
+  exposure_pct?: number;
+  candles?: number;
+  orders?: number;
+  fills?: number;
+  capital?: number;
+  elapsed_seconds?: number;
+  charges_breakdown?: Record<string, number>;
+};
+export type BacktestInfo = {
+  id: string;
+  script: string;
+  symbols: string[];
+  interval: Interval;
+  start: string;
+  end: string;
+  capital: number;
+  slippage_pct: number;
+  charges: Record<string, number>;
+  state: BacktestState;
+  message: string;
+  progress: number;
+  created_at: string;
+  finished_at: string | null;
+  summary: Pick<BacktestSummary, "final_value" | "net_pnl" | "total_return_pct" | "cagr_pct" | "sharpe" | "max_drawdown_pct" | "win_rate_pct" | "trades" | "total_charges" | "benchmark_return_pct"> | null;
+};
+export type BacktestTrade = {
+  symbol: string;
+  product: string;
+  direction: "long" | "short";
+  quantity: number;
+  entry_time: string;
+  entry_price: number;
+  exit_time: string;
+  exit_price: number;
+  gross_pnl: number;
+  charges: number;
+  net_pnl: number;
+  return_pct: number;
+  open: boolean;
+};
+export type BacktestFill = {
+  time: string;
+  order_id: string;
+  symbol: string;
+  side: "BUY" | "SELL";
+  product: string;
+  order_type: string;
+  quantity: number;
+  price: number;
+  value: number;
+  charges: number;
+  auto: boolean;
+  placed: string | null;
+};
+export type BacktestResult = {
+  summary: BacktestSummary;
+  equity: { time: string; equity: number; benchmark: number | null; drawdown_pct: number }[];
+  trades: BacktestTrade[];
+  fills: BacktestFill[];
+  fills_truncated: boolean;
+  per_symbol: { symbol: string; trades: number; net_pnl: number; win_rate_pct: number | null; open_pnl: number }[];
+  warnings: string[];
+};
+export type BacktestLog = { n: number; level: "info" | "warning" | "error"; text: string; time: string | null };
+export type BacktestPayload = { info: BacktestInfo; logs: BacktestLog[]; log_count: number; result: BacktestResult | null; code: string | null };
+export type BacktestConfig = { charges: Record<string, number>; intervals: Record<Interval, { earliest: string | null }>; max_symbols: number; today: string };
+// --- Live run performance --------------------------------------------------------
+
+export type RunBar = { time: number; open: number; high: number; low: number; close: number };
+export type RunPosition = { symbol: string; product: string; quantity: number; average_price: number; ltp: number | null; unrealized: number | null };
+export type RunPerformance = {
+  summary: {
+    net_pnl: number;
+    realized: number;
+    unrealized: number;
+    charges: number;
+    turnover: number;
+    max_drawdown: number;
+    orders: number;
+    rejected: number;
+    cancelled: number;
+    fills: number;
+    open_positions: number;
+    trades: number;
+    win_rate_pct: number | null;
+    profit_factor: number | null;
+    avg_trade_pnl: number | null;
+    best_trade: number | null;
+    worst_trade: number | null;
+  };
+  curve: { time: string; pnl: number; drawdown: number }[];
+  positions: RunPosition[];
+  trades: BacktestTrade[];
+  fills: BacktestFill[];
+  fills_truncated: boolean;
+  per_symbol: { symbol: string; trades: number; net_pnl: number; win_rate_pct: number | null; open_pnl: number }[];
+  chart: { symbol: string; bars: RunBar[]; fills: BacktestFill[]; position: { quantity: number; average_price: number; product: string } | null; ltp: number | null };
+  symbols: string[];
+  as_of: string;
+};

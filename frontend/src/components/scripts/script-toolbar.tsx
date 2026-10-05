@@ -8,7 +8,7 @@ import { RunDialog } from "./run-dialog";
 const btn = "rounded-md border border-border px-2.5 py-1 text-xs hover:bg-surface-2 disabled:opacity-50";
 
 /** Script picker + file actions + Save + Run, used by the dashboard and the Studio. */
-export function ScriptToolbar({ defaultSymbol, children }: { defaultSymbol?: string; children?: React.ReactNode }) {
+export function ScriptToolbar({ defaultSymbol, children, runLabel = "Run", runTitle }: { defaultSymbol?: string; children?: React.ReactNode; runLabel?: string; runTitle?: string }) {
   const { scripts, current, open, openInitial, save, create, rename, remove, syntaxError, error } = useScripts();
   const dirty = useScripts(isDirty);
   const [prompt, setPrompt] = useState<"new" | "rename" | null>(null);
@@ -67,12 +67,13 @@ export function ScriptToolbar({ defaultSymbol, children }: { defaultSymbol?: str
       <button
         onClick={() => setRunning(true)}
         disabled={!current}
+        title={runTitle}
         className="ml-auto flex items-center gap-1.5 rounded-md bg-accent px-3 py-1 text-xs font-semibold text-accent-fg disabled:opacity-50"
       >
         <svg viewBox="0 0 24 24" fill="currentColor" className="size-3" aria-hidden>
           <path d="M7 4v16l13-8z" />
         </svg>
-        Run
+        {runLabel}
       </button>
 
       {(syntaxError || error || message) && <p className="basis-full text-xs text-down">{syntaxError ? `Syntax error: ${syntaxError}` : (error ?? message)}</p>}

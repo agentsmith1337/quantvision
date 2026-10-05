@@ -163,6 +163,9 @@ export function ScriptEditor({ compact = false }: { compact?: boolean }) {
         automaticLayout: true,
         padding: { top: 8 },
         renderLineHighlight: "line",
+        // Monaco 0.57 types through the browser's experimental EditContext API by default, which can
+        // drop keystrokes in some browsers/setups; the classic hidden-textarea input is reliable.
+        editContext: false,
       }}
     />
   );

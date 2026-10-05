@@ -5,7 +5,7 @@ The application will utilize a persistent global layout wrapper (`layout.tsx` in
 
 *   **Left Sidebar (Expandable):**
     *   **Header:** QuantVision Logo (utilizing the provided `assets/icon.svg`).
-    *   **Navigation:** Icons and labels for Home, Portfolio, Trading Dashboard, Backtesting Studio, and API Docs.
+    *   **Navigation:** Icons and labels for Home, Portfolio, Trading Dashboard, Backtesting Studio, ML Studio, and API Docs.
     *   **Behavior:** Can be collapsed to show only icons, maximizing screen real estate for charts and IDE.
 *   **Top Navigation Bar:**
     *   **Right Side:** A consistent User Profile Picture. Clicking it reveals an "Account Options" dropdown card containing links to Settings, API Configuration, a **Theme Toggle** (Day Mode, Evening Mode, Dark Mode), and Sign Out.
@@ -71,6 +71,14 @@ A dedicated, full-screen environment for developing and simulating algorithmic s
 ### 2.6. API Documentation Page (`/docs`)
 *   **Purpose:** A dedicated, full-screen reference manual for writing algorithmic trading scripts in the QuantVision IDE. Accessed via the main Left Sidebar.
 *   **Content:** Renders the internal `sdk_reference.md` file using a Markdown viewer. It details the `pandas-ta` indicators, the `on_candle` event loop, and the custom wrapper commands (e.g., `api.buy()`).
+
+### 2.7. Machine Learning Studio (`/ml-studio`)
+*   **Purpose:** A built-in data science environment for training and testing ML models without leaving the application.
+*   **Jupyter Notebook UI:** A Next.js integrated UI capable of rendering and editing `.ipynb` notebook cells.
+*   **Native Execution:** Code cells are sent to the local FastAPI backend to be executed natively in the local Python environment (no Docker container required).
+*   **Integrated Terminal:** A built-in terminal mirroring the capabilities of the Jupyter terminal, running directly against the local environment.
+*   **Remote Compute Connection:** An interface to seamlessly attach the UI to a remote server (e.g., Google Colab, Runpod) for fast, GPU-accelerated model training, keeping the workflow centralized inside QuantVision.
+*   **Model Hooks (Inference Bridge):** A UI configuration panel to manage "Hooks" for trained models. This exposes active models (whether running locally or remotely) to the QuantVision scripting API, enabling users to call them for inference (e.g., `api.predict("my_model", data)`) directly inside their trading scripts.
 
 ## 3. UI/UX Technology Stack
 *   **Framework:** Next.js (App Router) built as a static export.

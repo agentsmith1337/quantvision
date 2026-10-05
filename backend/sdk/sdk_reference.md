@@ -1,6 +1,6 @@
 # QuantVision Strategy SDK
 
-Write a trading strategy as one Python function, `on_candle`. QuantVision calls it every time a candle closes, for every stock your strategy watches. The same script runs in **paper** and **live** trading today, and in the Backtesting Studio (Phase 4).
+Write a trading strategy as one Python function, `on_candle`. QuantVision calls it every time a candle closes, for every stock your strategy watches. The same script runs in **paper** and **live** trading and in **backtests** in the Backtesting Studio.
 
 ## Quick start
 
@@ -125,7 +125,27 @@ api.sell(quantity, symbol=None, order_type="MARKET", price=None, trigger_price=N
 | `api.ltp(symbol=None)` | last traded price right now |
 | `api.history(symbol=None, n=100)` | the last `n` closed candles as a DataFrame |
 | `api.log(*values)` | write to the run's log (`print()` works too) |
-| `api.mode` | `"paper"` or `"live"` |
+| `api.mode` | `"paper"`, `"live"`, or `"backtest"` in the Backtesting Studio |
+
+## Backtesting
+
+The **Run simulation** button in the Backtesting Studio runs the same script, unchanged, on historical candles. Choose the stocks (the script's `SYMBOLS` by default), the candle size, the dates, your starting capital and the costs.
+
+**Data.** Candles come from Yahoo Finance and are cached in `Documents/QuantVision/data_cache`, so a repeat backtest starts instantly. Daily candles go back decades; Yahoo keeps 1h candles for 730 days, 15m and 5m for 60 days, and 1m for 30 days. Prices are split-adjusted, not dividend-adjusted. About 300 candles before the start date are loaded first, so indicators have values from the first simulated candle.
+
+**What differs from a live run**
+
+* `on_candle` runs once per closed candle per stock, in universe order, and sees only candles up to that one. Nothing from the future is visible.
+* `on_start` runs just before the first simulated candle; `on_stop` after the last.
+* Orders never fill on the candle that placed them. A **MARKET** order fills at the **next candle's open** (plus slippage). **LIMIT**, **SL** and **SL-M** orders fill when a later candle reaches their price (at the open if it gaps through).
+* `api.buy()` / `api.sell()` therefore return the order as `"open"` or `"trigger pending"`; `on_order` is called when it fills, is cancelled or rejected. `api.position()` changes once the fill happens.
+* Orders are **DAY** orders: anything unfilled at the end of the trading day it could first fill in is cancelled.
+* **DELIVERY** buys need the cash (including charges); sells need holdings. **INTRADAY** needs 20% margin, allows short selling, is only available on 1h and shorter candles, and is **squared off automatically at 15:15** (after that, no new INTRADAY orders that day).
+* `api.ltp()` is the latest candle's close; `api.funds()` reflects the simulated account.
+* **Costs:** Angel One's charges (brokerage, STT, exchange and SEBI fees, stamp duty, GST, DP charge on delivery sells) are deducted from every fill. Defaults follow Angel One's published tariff and can be changed under **Costs**, together with slippage.
+* The 10-orders-a-minute limit and the static-IP check apply only to live runs. Indices can be watched (e.g. as a filter) but not traded.
+
+**Results:** net P&L and return, return of NIFTY 50 bought with the same capital, CAGR, Sharpe and Sortino (annualised from daily returns, risk-free rate 0%), maximum drawdown, win rate and profit factor of round-trip trades (after charges), the equity curve, every trade and execution, per-stock results and the log. Each backtest is saved with the exact script it ran.
 
 ## Safety rules
 

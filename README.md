@@ -39,6 +39,18 @@ in-app **API Docs** page (source: `backend/sdk/sdk_reference.md`).
 - Orders follow the global Paper/Live switch and pass the same risk limits as manual orders, plus a
   per-run limit of 10 orders a minute. The **Kill switch** in the top bar stops every script and
   cancels all open orders.
+- The Studio's **Live runs** tab shows each run as it trades: P&L (after estimated charges),
+  open positions, a P&L curve, the stocks' candles with every buy and sell marked, trades,
+  executions and the log. Only orders placed by that run are counted.
+
+## Backtesting
+
+In the **Backtesting Studio**, choose stocks, candle size, dates and capital, then press **Run simulation**:
+the same script runs unchanged on historical candles (Backtrader, in the script environment). Orders fill on
+the next candle's open, and Angel One's charges plus slippage are deducted (editable under *Costs*).
+Candles come from Yahoo Finance and are cached as Parquet in `Documents/QuantVision/data_cache`; Yahoo keeps
+1h candles for 730 days, 5m/15m for 60 and 1m for 30, daily candles for decades. Results are saved in
+`Documents/QuantVision/backtests`.
 
 ## News
 

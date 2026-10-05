@@ -143,6 +143,15 @@ def run_logs(run_id: str, after: int = 0) -> list[dict]:
         raise HTTPException(404, "No such run") from e
 
 
+@router.get("/runs/{run_id}/performance")
+def run_performance(run_id: str, symbol: str | None = None) -> dict:
+    """The run's fills, positions, trades, P&L curve and (for `symbol`) its candles with trade markers."""
+    try:
+        return service.runs.performance(run_id, symbol)
+    except KeyError as e:
+        raise HTTPException(404, "No such run") from e
+
+
 @router.post("/kill-switch")
 async def kill_switch() -> dict:
     """Stop every running script and cancel every open order."""

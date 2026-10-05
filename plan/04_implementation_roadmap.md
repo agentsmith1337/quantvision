@@ -29,11 +29,16 @@ This roadmap focuses on building a locally-hosted desktop application using Next
 *   Implement local historical data storage (Parquet files) to cache downloaded `yfinance` stock data.
 *   **Milestone:** Users can run fast backtests on historical data in the dedicated Backtesting Studio.
 
-## Phase 5: Packaging & Distribution
-*   Wrap the application using PyInstaller or Tauri to create a standalone executable (`.exe`).
-*   Implement auto-update mechanisms.
-*   **Milestone:** A polished, one-click installer is ready for users to download and run.
+## Phase 5: AI Agents (Copilot & News Analyst)
+*   **AI Agentic Coder:** Integrate an LLM to assist with code generation in the IDE, using Context Stuffing (`sdk_reference.md`).
+*   **AI News Analyst:** Build a news ingestion pipeline (Gnews/RSS) and use an LLM for real-time sentiment analysis.
+*   **Expanded Context SDK:** Expose market internals (`api.get_index()`, `api.get_sentiment()`) to the scripting engine so the LLM can write multi-variable strategies.
+*   **Milestone:** Users can generate strategies via chat and see live sentiment gauges.
 
-## Phase 6: Future Developments (Post-Launch)
-*   **AI Agentic Coder:** Integrate an LLM (OpenAI/Gemini) to assist with code generation in the IDE.
-*   **AI News Analyst:** Build a news ingestion pipeline and use an LLM for real-time sentiment analysis.
+## Phase 6: Machine Learning Studio
+*   Build a Jupyter-like notebook UI directly into the Next.js frontend (handling `.ipynb` files).
+*   Implement **native execution**: Code cells run directly in the local FastAPI backend's Python environment (no Docker required).
+*   Build an integrated Terminal mirroring Jupyter's terminal capabilities.
+*   Implement a **Remote Compute Connection**: Allow users to seamlessly attach the UI to a remote server (e.g., Google Colab, Runpod) for GPU-accelerated model training while keeping the workflow inside QuantVision.
+*   Implement **ML Inference Hooks**: Build an internal bridge allowing algorithmic trading scripts to easily attach to and call trained models for live/backtest inference, regardless of whether the model is running natively or hosted on a remote server.
+*   **Milestone:** Users can train ML models and deploy them seamlessly into live trading strategies for real-time inference.

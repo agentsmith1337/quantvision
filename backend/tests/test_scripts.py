@@ -152,6 +152,17 @@ def test_run_end_to_end_on_paper(signed_in):
     info = next(r for r in c.get("/api/runs").json() if r["id"] == rid)
     assert info["candles"] == 2 and info["orders"] == 1 and info["errors"] == 1
 
+    perf = c.get(f"/api/runs/{rid}/performance").json()
+    s = perf["summary"]
+    assert s["fills"] == 1 and s["orders"] == 1 and s["open_positions"] == 1 and s["charges"] > 0
+    assert s["rejected"] == 0  # the INFY order outside the universe fails in the script, before reaching the engine
+    assert perf["positions"][0]["symbol"] == "SBIN" and perf["positions"][0]["quantity"] == 2
+    assert perf["fills"][0]["side"] == "BUY" and perf["trades"][0]["open"] is True
+    assert perf["chart"]["symbol"] == "SBIN" and perf["chart"]["fills"] and perf["chart"]["bars"][-1]["close"] == 820.0
+    assert perf["curve"] and s["net_pnl"] == pytest.approx(s["unrealized"] - s["charges"], abs=0.02)
+    assert c.get(f"/api/runs/{rid}/performance", params={"symbol": "TCS"}).json()["chart"]["symbol"] == "TCS"
+    assert c.get("/api/runs/nope/performance").status_code == 404
+
     assert c.post(f"/api/runs/{rid}/stop").status_code == 200
     wait_for(lambda: True if next(r for r in c.get("/api/runs").json() if r["id"] == rid)["state"] == "stopped" else None, 15)
 
