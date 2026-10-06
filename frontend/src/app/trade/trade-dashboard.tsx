@@ -96,7 +96,7 @@ export function TradeDashboard() {
               <ChartTypeSelect value={chartType} onChange={setChartType} />
             </div>
           </div>
-          <div className="min-h-0 flex-1">
+          <div className="min-h-0 flex-1 bg-surface-solid">
             <PriceChart key={`${symbol}:${interval}`} symbol={symbol} interval={interval} chartType={chartType} indicators={indicators} />
           </div>
         </section>

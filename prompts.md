@@ -14,3 +14,7 @@
   AI tab (mode) for AI based analysis of the stock by yfinance + LLM, component on right top - history of executed trades, component on right bottom - dual mode "manual order" (buy sell margin limit etc
   buttons) and "script trade" (IDE part, maximisable, AI Enabled)"
 
+## Many prompts were skipped as deemed unnecessary
+
+[05/10/26][13:31] [in signin/page.tsx] " make the page have a background design - neutral of background color - a dark green hexagonal 2D lattice with diameter 10em that illuminates within 100em radius of the cursor and follows the cursor. the hexagon on focus eases out 200ms to navy blue color (fill and edges) ; and eases in 400ms to transparent (fill) and dark green (edges)"
+new output -> hex-background.tsx 

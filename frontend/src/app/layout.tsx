@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Google_Sans, JetBrains_Mono, Outfit } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { AppShell } from "@/components/app-shell";
+import { HexBackground } from "@/components/hex-background";
 import "./globals.css";
 
 const googleSans = Google_Sans({ variable: "--font-google-sans", subsets: ["latin"] });
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="font-sans">
         <ThemeProvider attribute="data-theme" themes={["day", "evening", "dark"]} defaultTheme="dark" enableSystem={false}>
+          <HexBackground />
           <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>

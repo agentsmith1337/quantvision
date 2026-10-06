@@ -108,7 +108,7 @@ function Shown({ payload }: { payload: BacktestPayload }) {
 
       {result && <Metrics s={result.summary} />}
       {result && result.equity.length > 1 && (
-        <div className="rounded-lg border border-border p-3">
+        <div className="rounded-lg border border-border bg-surface-solid p-3">
           <EquityChart points={result.equity} capital={info.capital} intraday={intraday} />
         </div>
       )}

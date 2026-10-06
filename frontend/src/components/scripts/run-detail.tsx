@@ -85,7 +85,7 @@ export function RunDetail({ run }: { run: RunInfo }) {
             ))}
           </div>
 
-          <div className="rounded-lg border border-border p-3">
+          <div className="rounded-lg border border-border bg-surface-solid p-3">
             {perf.curve.length > 1 ? (
               <EquityChart
                 mode="pnl"
@@ -98,7 +98,7 @@ export function RunDetail({ run }: { run: RunInfo }) {
             )}
           </div>
 
-          <div className="rounded-lg border border-border p-3">
+          <div className="rounded-lg border border-border bg-surface-solid p-3">
             <div className="mb-2 flex flex-wrap gap-1">
               {perf.symbols.map((sym) => (
                 <button
